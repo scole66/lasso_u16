@@ -1,5 +1,5 @@
 use honggfuzz::fuzz;
-use lasso::Rodeo;
+use lasso_u16::Rodeo;
 
 fn main() {
     let mut rodeo = Rodeo::default();

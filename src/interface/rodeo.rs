@@ -12,22 +12,22 @@ where
     S: BuildHasher,
 {
     #[cfg_attr(feature = "inline-more", inline)]
-    fn get_or_intern(&mut self, val: &str) -> K {
+    fn get_or_intern(&mut self, val: &[u16]) -> K {
         self.get_or_intern(val)
     }
 
     #[cfg_attr(feature = "inline-more", inline)]
-    fn try_get_or_intern(&mut self, val: &str) -> LassoResult<K> {
+    fn try_get_or_intern(&mut self, val: &[u16]) -> LassoResult<K> {
         self.try_get_or_intern(val)
     }
 
     #[cfg_attr(feature = "inline-more", inline)]
-    fn get_or_intern_static(&mut self, val: &'static str) -> K {
+    fn get_or_intern_static(&mut self, val: &'static [u16]) -> K {
         self.get_or_intern_static(val)
     }
 
     #[cfg_attr(feature = "inline-more", inline)]
-    fn try_get_or_intern_static(&mut self, val: &'static str) -> LassoResult<K> {
+    fn try_get_or_intern_static(&mut self, val: &'static [u16]) -> LassoResult<K> {
         self.try_get_or_intern_static(val)
     }
 }
@@ -71,12 +71,12 @@ where
     S: BuildHasher,
 {
     #[cfg_attr(feature = "inline-more", inline)]
-    fn get(&self, val: &str) -> Option<K> {
+    fn get(&self, val: &[u16]) -> Option<K> {
         self.get(val)
     }
 
     #[cfg_attr(feature = "inline-more", inline)]
-    fn contains(&self, val: &str) -> bool {
+    fn contains(&self, val: &[u16]) -> bool {
         self.contains(val)
     }
 }
@@ -112,17 +112,17 @@ where
     K: Key,
 {
     #[cfg_attr(feature = "inline-more", inline)]
-    fn resolve<'a>(&'a self, key: &K) -> &'a str {
+    fn resolve<'a>(&'a self, key: &K) -> &'a [u16] {
         self.resolve(key)
     }
 
     #[cfg_attr(feature = "inline-more", inline)]
-    fn try_resolve<'a>(&'a self, key: &K) -> Option<&'a str> {
+    fn try_resolve<'a>(&'a self, key: &K) -> Option<&'a [u16]> {
         self.try_resolve(key)
     }
 
     #[cfg_attr(feature = "inline-more", inline)]
-    unsafe fn resolve_unchecked<'a>(&'a self, key: &K) -> &'a str {
+    unsafe fn resolve_unchecked<'a>(&'a self, key: &K) -> &'a [u16] {
         self.resolve_unchecked(key)
     }
 

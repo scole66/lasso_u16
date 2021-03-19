@@ -25,10 +25,10 @@ pub trait Interner<K = Spur>: Reader<K> + Resolver<K> {
     /// keys, this means that you've interned more strings than it can handle. (For [`Spur`] this
     /// means that `u32::MAX - 1` unique strings were interned)
     ///
-    fn get_or_intern(&mut self, val: &str) -> K;
+    fn get_or_intern(&mut self, val: &[u16]) -> K;
 
     /// Get the key for a string, interning it if it does not yet exist
-    fn try_get_or_intern(&mut self, val: &str) -> LassoResult<K>;
+    fn try_get_or_intern(&mut self, val: &[u16]) -> LassoResult<K>;
 
     /// Get the key for a static string, interning it if it does not yet exist
     ///
@@ -40,12 +40,12 @@ pub trait Interner<K = Spur>: Reader<K> + Resolver<K> {
     /// keys, this means that you've interned more strings than it can handle. (For [`Spur`] this
     /// means that `u32::MAX - 1` unique strings were interned)
     ///
-    fn get_or_intern_static(&mut self, val: &'static str) -> K;
+    fn get_or_intern_static(&mut self, val: &'static [u16]) -> K;
 
     /// Get the key for a static string, interning it if it does not yet exist
     ///
     /// This will not reallocate or copy the given string
-    fn try_get_or_intern_static(&mut self, val: &'static str) -> LassoResult<K>;
+    fn try_get_or_intern_static(&mut self, val: &'static [u16]) -> LassoResult<K>;
 }
 
 /// A generic interface over interners that can be turned into both a [`Reader`] and a [`Resolver`]
@@ -82,13 +82,13 @@ where
 
 /// A generic interface that allows using any underlying interner for
 /// both its reading and resolution capabilities, allowing both
-/// `str -> key` and `key -> str` lookups
+/// `[u16] -> key` and `key -> [u16]` lookups
 pub trait Reader<K = Spur>: Resolver<K> {
     /// Get a key for the given string value if it exists
-    fn get(&self, val: &str) -> Option<K>;
+    fn get(&self, val: &[u16]) -> Option<K>;
 
     /// Returns `true` if the current interner contains the given string
-    fn contains(&self, val: &str) -> bool;
+    fn contains(&self, val: &[u16]) -> bool;
 }
 
 /// A generic interface over [`Reader`]s that can be turned into a [`Resolver`].
@@ -116,7 +116,7 @@ where
 }
 
 /// A generic interface that allows using any underlying interner only
-/// for its resolution capabilities, allowing only `key -> str` lookups
+/// for its resolution capabilities, allowing only `key -> [u16]` lookups
 pub trait Resolver<K = Spur> {
     /// Resolves the given key into a string
     ///
@@ -124,11 +124,11 @@ pub trait Resolver<K = Spur> {
     ///
     /// Panics if the key is not contained in the current [`Resolver`]
     ///
-    fn resolve<'a>(&'a self, key: &K) -> &'a str;
+    fn resolve<'a>(&'a self, key: &K) -> &'a [u16];
 
     /// Attempts to resolve the given key into a string, returning `None`
     /// if it cannot be found
-    fn try_resolve<'a>(&'a self, key: &K) -> Option<&'a str>;
+    fn try_resolve<'a>(&'a self, key: &K) -> Option<&'a [u16]>;
 
     /// Resolves a string by its key without preforming bounds checks
     ///
@@ -136,7 +136,7 @@ pub trait Resolver<K = Spur> {
     ///
     /// The key must be valid for the current [`Resolver`]
     ///
-    unsafe fn resolve_unchecked<'a>(&'a self, key: &K) -> &'a str;
+    unsafe fn resolve_unchecked<'a>(&'a self, key: &K) -> &'a [u16];
 
     /// Returns `true` if the current interner contains the given key
     fn contains_key(&self, key: &K) -> bool;

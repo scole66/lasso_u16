@@ -32,7 +32,7 @@ pub struct RodeoReader<K = Spur, S = RandomState> {
     // `Rodeo` itself
     map: HashMap<K, (), ()>,
     hasher: S,
-    pub(crate) strings: Vec<&'static str>,
+    pub(crate) strings: Vec<&'static [u16]>,
     arena: Arena,
 }
 
@@ -47,7 +47,7 @@ impl<K, S> RodeoReader<K, S> {
     pub(crate) unsafe fn new(
         map: HashMap<K, (), ()>,
         hasher: S,
-        strings: Vec<&'static str>,
+        strings: Vec<&'static [u16]>,
         arena: Arena,
     ) -> Self {
         Self {
@@ -63,7 +63,7 @@ impl<K, S> RodeoReader<K, S> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let mut rodeo = Rodeo::default();
@@ -78,11 +78,11 @@ impl<K, S> RodeoReader<K, S> {
     #[cfg_attr(feature = "inline-more", inline)]
     pub fn get<T>(&self, val: T) -> Option<K>
     where
-        T: AsRef<str>,
+        T: AsRef<[u16]>,
         S: BuildHasher,
         K: Key,
     {
-        let string_slice: &str = val.as_ref();
+        let string_slice: &[u16] = val.as_ref();
 
         // Make a hash of the requested string
         let hash = {
@@ -95,7 +95,7 @@ impl<K, S> RodeoReader<K, S> {
         // Get the map's entry that the string should occupy
         let entry = self.map.raw_entry().from_hash(hash, |key| {
             // Safety: The index given by `key` will be in bounds of the strings vector
-            let key_string: &str = unsafe { index_unchecked!(self.strings, key.into_usize()) };
+            let key_string: &[u16] = unsafe { index_unchecked!(self.strings, key.into_usize()) };
 
             // Compare the requested string against the key's string
             string_slice == key_string
@@ -109,7 +109,7 @@ impl<K, S> RodeoReader<K, S> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let mut rodeo = Rodeo::default();
@@ -124,7 +124,7 @@ impl<K, S> RodeoReader<K, S> {
     #[cfg_attr(feature = "inline-more", inline)]
     pub fn contains<T>(&self, val: T) -> bool
     where
-        T: AsRef<str>,
+        T: AsRef<[u16]>,
         S: BuildHasher,
         K: Key,
     {
@@ -136,8 +136,8 @@ impl<K, S> RodeoReader<K, S> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
-    /// # use lasso::{Key, Spur};
+    /// use lasso_u16::Rodeo;
+    /// # use lasso_u16::{Key, Spur};
     ///
     /// let mut rodeo = Rodeo::default();
     /// let key = rodeo.get_or_intern("Strings of things with wings and dings");
@@ -166,7 +166,7 @@ impl<K, S> RodeoReader<K, S> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let mut rodeo = Rodeo::default();
@@ -178,7 +178,7 @@ impl<K, S> RodeoReader<K, S> {
     ///
     /// [`Key`]: crate::Key
     #[cfg_attr(feature = "inline-more", inline)]
-    pub fn resolve<'a>(&'a self, key: &K) -> &'a str
+    pub fn resolve<'a>(&'a self, key: &K) -> &'a [u16]
     where
         K: Key,
     {
@@ -198,7 +198,7 @@ impl<K, S> RodeoReader<K, S> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let mut rodeo = Rodeo::default();
@@ -210,7 +210,7 @@ impl<K, S> RodeoReader<K, S> {
     ///
     /// [`Key`]: crate::Key
     #[cfg_attr(feature = "inline-more", inline)]
-    pub fn try_resolve<'a>(&'a self, key: &K) -> Option<&'a str>
+    pub fn try_resolve<'a>(&'a self, key: &K) -> Option<&'a [u16]>
     where
         K: Key,
     {
@@ -236,7 +236,7 @@ impl<K, S> RodeoReader<K, S> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let mut rodeo = Rodeo::default();
@@ -250,7 +250,7 @@ impl<K, S> RodeoReader<K, S> {
     ///
     /// [`Key`]: crate::Key
     #[cfg_attr(feature = "inline-more", inline)]
-    pub unsafe fn resolve_unchecked<'a>(&'a self, key: &K) -> &'a str
+    pub unsafe fn resolve_unchecked<'a>(&'a self, key: &K) -> &'a [u16]
     where
         K: Key,
     {
@@ -262,7 +262,7 @@ impl<K, S> RodeoReader<K, S> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let mut rodeo = Rodeo::default();
@@ -282,7 +282,7 @@ impl<K, S> RodeoReader<K, S> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let rodeo = Rodeo::default();
@@ -314,7 +314,7 @@ impl<K, S> RodeoReader<K, S> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let mut rodeo = Rodeo::default();
@@ -344,7 +344,7 @@ unsafe impl<K: Sync, S: Sync> Sync for RodeoReader<K, S> {}
 unsafe impl<K: Send, S: Send> Send for RodeoReader<K, S> {}
 
 impl<'a, K: Key, S> IntoIterator for &'a RodeoReader<K, S> {
-    type Item = (K, &'a str);
+    type Item = (K, &'a [u16]);
     type IntoIter = Iter<'a, K>;
 
     #[cfg_attr(feature = "inline-more", inline)]
@@ -358,7 +358,7 @@ where
     K: Key,
     S: BuildHasher,
 {
-    type Output = str;
+    type Output = [u16];
 
     #[cfg_attr(feature = "inline-more", inline)]
     fn index(&self, idx: K) -> &Self::Output {
@@ -452,7 +452,7 @@ impl<'de, K: Key, S: BuildHasher + Default> Deserialize<'de> for RodeoReader<K, 
             // Get the map's entry that the string should occupy
             let entry = map.raw_entry_mut().from_hash(hash, |key: &K| {
                 // Safety: The index given by `key` will be in bounds of the strings vector
-                let key_string: &str = unsafe { index_unchecked!(strings, key.into_usize()) };
+                let key_string: &[u16] = unsafe { index_unchecked!(strings, key.into_usize()) };
 
                 // Compare the requested string against the key's string
                 allocated == key_string
@@ -472,7 +472,7 @@ impl<'de, K: Key, S: BuildHasher + Default> Deserialize<'de> for RodeoReader<K, 
 
                     // Insert the key with the hash of the string that it points to, reusing the hash we made earlier
                     entry.insert_with_hasher(hash, key, (), |key| {
-                        let key_string: &str =
+                        let key_string: &[u16] =
                             unsafe { index_unchecked!(strings, key.into_usize()) };
 
                         let mut state = hasher.build_hasher();
@@ -503,21 +503,21 @@ mod tests {
         #[test]
         fn get() {
             let mut rodeo = Rodeo::default();
-            let key = rodeo.get_or_intern("A");
+            let key = rodeo.get_or_intern(&[0x41]);
 
             let reader = rodeo.into_reader();
-            assert_eq!(Some(key), reader.get("A"));
+            assert_eq!(Some(key), reader.get(&[0x41]));
 
-            assert!(reader.get("F").is_none());
+            assert!(reader.get(&[0x46]).is_none());
         }
 
         #[test]
         fn resolve() {
             let mut rodeo = Rodeo::default();
-            let key = rodeo.get_or_intern("A");
+            let key = rodeo.get_or_intern(&[0x41]);
 
             let reader = rodeo.into_reader();
-            assert_eq!("A", reader.resolve(&key));
+            assert_eq!(&[0x41], reader.resolve(&key));
         }
 
         #[test]
@@ -531,10 +531,11 @@ mod tests {
         #[test]
         fn try_resolve() {
             let mut rodeo = Rodeo::default();
-            let key = rodeo.get_or_intern("A");
+            let key = rodeo.get_or_intern(&[0x41]);
 
             let reader = rodeo.into_reader();
-            assert_eq!(Some("A"), reader.try_resolve(&key));
+            let left: &[u16] = &[0x41];
+            assert_eq!(Some(left), reader.try_resolve(&key));
             assert_eq!(
                 None,
                 reader.try_resolve(&Spur::try_from_usize(100).unwrap())
@@ -544,20 +545,20 @@ mod tests {
         #[test]
         fn resolve_unchecked() {
             let mut rodeo = Rodeo::default();
-            let key = rodeo.get_or_intern("A");
+            let key = rodeo.get_or_intern(&[0x41]);
 
             let reader = rodeo.into_reader();
             unsafe {
-                assert_eq!("A", reader.resolve_unchecked(&key));
+                assert_eq!(&[0x41], reader.resolve_unchecked(&key));
             }
         }
 
         #[test]
         fn len() {
             let mut rodeo = Rodeo::default();
-            rodeo.get_or_intern("A");
-            rodeo.get_or_intern("B");
-            rodeo.get_or_intern("C");
+            rodeo.get_or_intern(&[0x41]);
+            rodeo.get_or_intern(&[0x42]);
+            rodeo.get_or_intern(&[0x43]);
 
             let reader = rodeo.into_reader();
             assert_eq!(reader.len(), 3);
@@ -574,32 +575,38 @@ mod tests {
         #[test]
         fn iter() {
             let mut rodeo = Rodeo::default();
-            let a = rodeo.get_or_intern("a");
-            let b = rodeo.get_or_intern("b");
-            let c = rodeo.get_or_intern("c");
+            let a = rodeo.get_or_intern(&[0x61]);
+            let b = rodeo.get_or_intern(&[0x62]);
+            let c = rodeo.get_or_intern(&[0x63]);
 
             let resolver = rodeo.into_reader();
             let mut iter = resolver.iter();
 
-            assert_eq!(Some((a, "a")), iter.next());
-            assert_eq!(Some((b, "b")), iter.next());
-            assert_eq!(Some((c, "c")), iter.next());
+            let slice: &[u16] = &[0x61];
+            assert_eq!(Some((a, slice)), iter.next());
+            let slice: &[u16] = &[0x62];
+            assert_eq!(Some((b, slice)), iter.next());
+            let slice: &[u16] = &[0x63];
+            assert_eq!(Some((c, slice)), iter.next());
             assert_eq!(None, iter.next());
         }
 
         #[test]
         fn strings() {
             let mut rodeo = Rodeo::default();
-            rodeo.get_or_intern("a");
-            rodeo.get_or_intern("b");
-            rodeo.get_or_intern("c");
+            rodeo.get_or_intern(&[0x61]);
+            rodeo.get_or_intern(&[0x62]);
+            rodeo.get_or_intern(&[0x63]);
 
             let resolver = rodeo.into_reader();
             let mut iter = resolver.strings();
 
-            assert_eq!(Some("a"), iter.next());
-            assert_eq!(Some("b"), iter.next());
-            assert_eq!(Some("c"), iter.next());
+            let slice: &[u16] = &[0x61];
+            assert_eq!(Some(slice), iter.next());
+            let slice: &[u16] = &[0x62];
+            assert_eq!(Some(slice), iter.next());
+            let slice: &[u16] = &[0x63];
+            assert_eq!(Some(slice), iter.next());
             assert_eq!(None, iter.next());
         }
 
@@ -612,10 +619,10 @@ mod tests {
         #[test]
         fn into_resolver() {
             let mut rodeo = Rodeo::default();
-            let key = rodeo.get_or_intern("A");
+            let key = rodeo.get_or_intern(&[0x41]);
 
             let resolver = rodeo.into_reader().into_resolver();
-            assert_eq!("A", resolver.resolve(&key));
+            assert_eq!(&[0x41], resolver.resolve(&key));
         }
 
         #[test]
@@ -628,33 +635,33 @@ mod tests {
         #[test]
         fn contains() {
             let mut rodeo = Rodeo::default();
-            rodeo.get_or_intern("");
+            rodeo.get_or_intern(&[]);
             let resolver = rodeo.into_reader();
 
-            assert!(resolver.contains(""));
-            assert!(resolver.contains(""));
+            assert!(resolver.contains(&[]));
+            assert!(resolver.contains(&[]));
         }
 
         #[test]
         fn contains_key() {
             let mut rodeo = Rodeo::default();
-            let key = rodeo.get_or_intern("");
+            let key = rodeo.get_or_intern(&[]);
             let resolver = rodeo.into_reader();
 
-            assert!(resolver.contains(""));
+            assert!(resolver.contains(&[]));
             assert!(resolver.contains_key(&key));
             assert!(!resolver.contains_key(&Spur::try_from_usize(10000).unwrap()));
         }
 
         #[test]
         fn into_iterator() {
-            let rodeo = ["a", "b", "c", "d", "e"]
+            let rodeo = [&[0x61], &[0x62], &[0x63], &[0x64], &[0x65]]
                 .iter()
                 .collect::<Rodeo>()
                 .into_reader();
 
             for ((key, string), (expected_key, expected_string)) in rodeo.into_iter().zip(
-                [(0usize, "a"), (1, "b"), (2, "c"), (3, "d"), (4, "e")]
+                [(0usize, &[0x61]), (1, &[0x62]), (2, &[0x63]), (3, &[0x64]), (4, &[0x65])]
                     .iter()
                     .copied(),
             ) {
@@ -666,10 +673,10 @@ mod tests {
         #[test]
         fn index() {
             let mut rodeo = Rodeo::default();
-            let key = rodeo.get_or_intern("A");
+            let key = rodeo.get_or_intern(&[0x41]);
 
             let reader = rodeo.into_reader();
-            assert_eq!("A", &reader[key]);
+            assert_eq!(&[0x41], &reader[key]);
         }
 
         #[test]
@@ -691,10 +698,10 @@ mod tests {
         #[cfg(feature = "serialize")]
         fn filled_serialize() {
             let mut rodeo = Rodeo::default();
-            let a = rodeo.get_or_intern("a");
-            let b = rodeo.get_or_intern("b");
-            let c = rodeo.get_or_intern("c");
-            let d = rodeo.get_or_intern("d");
+            let a = rodeo.get_or_intern(&[0x61]);
+            let b = rodeo.get_or_intern(&[0x62]);
+            let c = rodeo.get_or_intern(&[0x63]);
+            let d = rodeo.get_or_intern(&[0x64]);
             let rodeo = rodeo.into_reader();
 
             let ser = serde_json::to_string(&rodeo).unwrap();
@@ -705,7 +712,7 @@ mod tests {
             let deser2: RodeoReader = serde_json::from_str(&ser2).unwrap();
 
             for (((correct_key, correct_str), (key1, str1)), (key2, str2)) in
-                [(a, "a"), (b, "b"), (c, "c"), (d, "d")]
+                [(a, &[0x61]), (b, &[0x62]), (c, &[0x63]), (d, &[0x64])]
                     .iter()
                     .copied()
                     .zip(&deser)
@@ -726,13 +733,13 @@ mod tests {
             assert_eq!(a.into_reader(), b.into_reader());
 
             let mut a = Rodeo::default();
-            a.get_or_intern("a");
-            a.get_or_intern("b");
-            a.get_or_intern("c");
+            a.get_or_intern(&[0x61]);
+            a.get_or_intern(&[0x62]);
+            a.get_or_intern(&[0x63]);
             let mut b = Rodeo::default();
-            b.get_or_intern("a");
-            b.get_or_intern("b");
-            b.get_or_intern("c");
+            b.get_or_intern(&[0x61]);
+            b.get_or_intern(&[0x62]);
+            b.get_or_intern(&[0x63]);
             assert_eq!(a.into_reader(), b.into_reader());
         }
 
@@ -743,13 +750,13 @@ mod tests {
             assert_eq!(a.into_reader(), b.into_resolver());
 
             let mut a = Rodeo::default();
-            a.get_or_intern("a");
-            a.get_or_intern("b");
-            a.get_or_intern("c");
+            a.get_or_intern(&[0x61]);
+            a.get_or_intern(&[0x62]);
+            a.get_or_intern(&[0x63]);
             let mut b = Rodeo::default();
-            b.get_or_intern("a");
-            b.get_or_intern("b");
-            b.get_or_intern("c");
+            b.get_or_intern(&[0x61]);
+            b.get_or_intern(&[0x62]);
+            b.get_or_intern(&[0x63]);
             assert_eq!(a.into_reader(), b.into_resolver());
         }
     }
@@ -762,63 +769,63 @@ mod tests {
         #[test]
         fn get() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("A");
+            let key = rodeo.intern(&[0x41]);
 
             let reader = rodeo.into_reader();
-            assert_eq!(Some(key), reader.get("A"));
+            assert_eq!(Some(key), reader.get(&[0x41]));
 
-            assert!(reader.get("F").is_none());
+            assert!(reader.get(&[0x46]).is_none());
         }
 
         #[test]
         #[cfg(not(miri))]
         fn get_threaded() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("A");
+            let key = rodeo.intern(&[0x41]);
 
             let reader = Arc::new(rodeo.into_reader());
 
             let moved = Arc::clone(&reader);
             thread::spawn(move || {
-                assert_eq!(Some(key), moved.get("A"));
-                assert!(moved.get("F").is_none());
+                assert_eq!(Some(key), moved.get(&[0x41]));
+                assert!(moved.get(&[0x46]).is_none());
             });
 
-            assert_eq!(Some(key), reader.get("A"));
-            assert!(reader.get("F").is_none());
+            assert_eq!(Some(key), reader.get(&[0x41]));
+            assert!(reader.get(&[0x46]).is_none());
         }
 
         #[test]
         fn resolve() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("A");
+            let key = rodeo.intern(&[0x41]);
 
             let reader = rodeo.into_reader();
-            assert_eq!("A", reader.resolve(&key));
+            assert_eq!(&[0x41], reader.resolve(&key));
         }
 
         #[test]
         #[cfg(not(miri))]
         fn resolve_threaded() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("A");
+            let key = rodeo.intern(&[0x41]);
 
             let reader = Arc::new(rodeo.into_reader());
 
             let moved = Arc::clone(&reader);
             thread::spawn(move || {
-                assert_eq!("A", moved.resolve(&key));
+                assert_eq!(&[0x41], moved.resolve(&key));
             });
 
-            assert_eq!("A", reader.resolve(&key));
+            assert_eq!(&[0x41], reader.resolve(&key));
         }
 
         #[test]
         fn len() {
             let rodeo = ThreadedRodeo::default();
-            rodeo.intern("A");
-            rodeo.intern("B");
-            rodeo.intern("C");
+            rodeo.intern(&[0x41]);
+            rodeo.intern(&[0x42]);
+            rodeo.intern(&[0x43]);
 
             let reader = rodeo.into_reader();
             assert_eq!(reader.len(), 3);
@@ -835,48 +842,48 @@ mod tests {
         #[test]
         fn clone() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("Test");
+            let key = rodeo.intern(&[0x54, 0x65, 0x73, 0x74]);
 
             let reader_rodeo = rodeo.into_reader();
-            assert_eq!("Test", reader_rodeo.resolve(&key));
+            assert_eq!(&[0x54, 0x65, 0x73, 0x74], reader_rodeo.resolve(&key));
 
             let cloned = reader_rodeo.clone();
-            assert_eq!("Test", cloned.resolve(&key));
+            assert_eq!(&[0x54, 0x65, 0x73, 0x74], cloned.resolve(&key));
 
             drop(reader_rodeo);
 
-            assert_eq!("Test", cloned.resolve(&key));
+            assert_eq!(&[0x54, 0x65, 0x73, 0x74], cloned.resolve(&key));
         }
 
         #[test]
         fn iter() {
             let rodeo = ThreadedRodeo::default();
-            let a = rodeo.get_or_intern("a");
-            let b = rodeo.get_or_intern("b");
-            let c = rodeo.get_or_intern("c");
+            let a = rodeo.get_or_intern(&[0x61]);
+            let b = rodeo.get_or_intern(&[0x62]);
+            let c = rodeo.get_or_intern(&[0x63]);
 
             let resolver = rodeo.into_resolver();
             let mut iter = resolver.iter();
 
-            assert_eq!(Some((a, "a")), iter.next());
-            assert_eq!(Some((b, "b")), iter.next());
-            assert_eq!(Some((c, "c")), iter.next());
+            assert_eq!(Some((a, &[0x61])), iter.next());
+            assert_eq!(Some((b, &[0x62])), iter.next());
+            assert_eq!(Some((c, &[0x63])), iter.next());
             assert_eq!(None, iter.next());
         }
 
         #[test]
         fn strings() {
             let rodeo = ThreadedRodeo::default();
-            rodeo.get_or_intern("a");
-            rodeo.get_or_intern("b");
-            rodeo.get_or_intern("c");
+            rodeo.get_or_intern(&[0x61]);
+            rodeo.get_or_intern(&[0x62]);
+            rodeo.get_or_intern(&[0x63]);
 
             let resolver = rodeo.into_resolver();
             let mut iter = resolver.strings();
 
-            assert_eq!(Some("a"), iter.next());
-            assert_eq!(Some("b"), iter.next());
-            assert_eq!(Some("c"), iter.next());
+            assert_eq!(Some(&[0x61]), iter.next());
+            assert_eq!(Some(&[0x62]), iter.next());
+            assert_eq!(Some(&[0x63]), iter.next());
             assert_eq!(None, iter.next());
         }
 
@@ -901,10 +908,10 @@ mod tests {
         #[test]
         fn into_resolver() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("A");
+            let key = rodeo.intern(&[0x41]);
 
             let resolver = rodeo.into_reader().into_resolver();
-            assert_eq!("A", resolver.resolve(&key));
+            assert_eq!(&[0x41], resolver.resolve(&key));
         }
 
         #[test]
@@ -917,33 +924,33 @@ mod tests {
         #[test]
         fn contains() {
             let mut rodeo = ThreadedRodeo::default();
-            rodeo.get_or_intern("");
+            rodeo.get_or_intern(&[]);
             let resolver = rodeo.into_reader();
 
-            assert!(resolver.contains(""));
-            assert!(resolver.contains(""));
+            assert!(resolver.contains(&[]));
+            assert!(resolver.contains(&[]));
         }
 
         #[test]
         fn contains_key() {
             let mut rodeo = ThreadedRodeo::default();
-            let key = rodeo.get_or_intern("");
+            let key = rodeo.get_or_intern(&[]);
             let resolver = rodeo.into_reader();
 
-            assert!(resolver.contains(""));
+            assert!(resolver.contains(&[]));
             assert!(resolver.contains_key(&key));
             assert!(!resolver.contains_key(&Spur::try_from_usize(10000).unwrap()));
         }
 
         #[test]
         fn into_iterator() {
-            let rodeo = ["a", "b", "c", "d", "e"]
+            let rodeo = [&[0x61], &[0x62], &[0x63], &[0x64], &[0x65]]
                 .iter()
                 .collect::<ThreadedRodeo>()
                 .into_reader();
 
             for ((key, string), (expected_key, expected_string)) in rodeo.into_iter().zip(
-                [(0usize, "a"), (1, "b"), (2, "c"), (3, "d"), (4, "e")]
+                [(0usize, &[0x61]), (1, &[0x62]), (2, &[0x63]), (3, &[0x64]), (4, &[0x65])]
                     .iter()
                     .copied(),
             ) {
@@ -955,10 +962,10 @@ mod tests {
         #[test]
         fn index() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("A");
+            let key = rodeo.intern(&[0x41]);
 
             let reader = rodeo.into_reader();
-            assert_eq!("A", &reader[key]);
+            assert_eq!(&[0x41], &reader[key]);
         }
 
         #[test]
@@ -980,10 +987,10 @@ mod tests {
         #[cfg(feature = "serialize")]
         fn filled_serialize() {
             let rodeo = ThreadedRodeo::default();
-            let a = rodeo.get_or_intern("a");
-            let b = rodeo.get_or_intern("b");
-            let c = rodeo.get_or_intern("c");
-            let d = rodeo.get_or_intern("d");
+            let a = rodeo.get_or_intern(&[0x61]);
+            let b = rodeo.get_or_intern(&[0x62]);
+            let c = rodeo.get_or_intern(&[0x63]);
+            let d = rodeo.get_or_intern(&[0x64]);
             let rodeo = rodeo.into_reader();
 
             let ser = serde_json::to_string(&rodeo).unwrap();
@@ -994,7 +1001,7 @@ mod tests {
             let deser2: RodeoReader = serde_json::from_str(&ser2).unwrap();
 
             for (((correct_key, correct_str), (key1, str1)), (key2, str2)) in
-                [(a, "a"), (b, "b"), (c, "c"), (d, "d")]
+                [(a, &[0x61]), (b, &[0x62]), (c, &[0x63]), (d, &[0x64])]
                     .iter()
                     .copied()
                     .zip(&deser)

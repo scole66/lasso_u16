@@ -63,8 +63,8 @@ impl Arena {
     ///
     /// The reference passed back must be dropped before the arena that created it is
     ///
-    pub unsafe fn store_str(&mut self, string: &str) -> LassoResult<&'static str> {
-        let slice = string.as_bytes();
+    pub unsafe fn store_str(&mut self, string: &[u16]) -> LassoResult<&'static [u16]> {
+        let slice = string;//.as_bytes();
         // Ensure the length is at least 1, mainly for empty strings
         // This theoretically wastes a single byte, but it shouldn't matter since
         // the interner should ensure that only one empty string is ever interned
@@ -170,7 +170,7 @@ struct Bucket {
     /// The start of uninitialized memory within `items`
     index: usize,
     /// A pointer to the start of the data
-    items: NonNull<u8>,
+    items: NonNull<u16>,
     /// The total number of Ts that can be stored
     capacity: NonZeroUsize,
 }
@@ -183,8 +183,8 @@ impl Drop for Bucket {
             let items = self.items.as_ptr();
 
             debug_assert!(Layout::from_size_align(
-                mem::size_of::<u8>() * self.capacity.get(),
-                mem::align_of::<u8>(),
+                mem::size_of::<u16>() * self.capacity.get(),
+                mem::align_of::<u16>(),
             )
             .is_ok());
 
@@ -194,8 +194,8 @@ impl Drop for Bucket {
                 // Safety: Align will always be a non-zero power of two and the
                 //         size will not overflow when rounded up
                 Layout::from_size_align_unchecked(
-                    mem::size_of::<u8>() * self.capacity.get(),
-                    mem::align_of::<u8>(),
+                    mem::size_of::<u16>() * self.capacity.get(),
+                    mem::align_of::<u16>(),
                 ),
             );
         }
@@ -207,16 +207,16 @@ impl Bucket {
     pub(crate) fn with_capacity(capacity: NonZeroUsize) -> LassoResult<Self> {
         unsafe {
             debug_assert!(Layout::from_size_align(
-                mem::size_of::<u8>() * capacity.get(),
-                mem::align_of::<u8>(),
+                mem::size_of::<u16>() * capacity.get(),
+                mem::align_of::<u16>(),
             )
             .is_ok());
 
             // Safety: Align will always be a non-zero power of two and the
             //         size will not overflow when rounded up
             let layout = Layout::from_size_align_unchecked(
-                mem::size_of::<u8>() * capacity.get(),
-                mem::align_of::<u8>(),
+                mem::size_of::<u16>() * capacity.get(),
+                mem::align_of::<u16>(),
             );
 
             // Allocate the bucket's memory
@@ -249,9 +249,9 @@ impl Bucket {
     ///
     /// The current bucket must have room for all bytes of the slice and
     /// the caller promises to forget the reference before the arena is dropped.
-    /// Additionally, `slice` must be valid UTF-8 and should come from an `&str`
+    /// Additionally, `slice` must be valid UTF-8 and should come from an `&[u16]`
     ///
-    pub(crate) unsafe fn push_slice(&mut self, slice: &[u8]) -> &'static str {
+    pub(crate) unsafe fn push_slice(&mut self, slice: &[u16]) -> &'static [u16] {
         debug_assert!(!self.is_full());
         debug_assert!(slice.len() <= self.capacity.get() - self.index);
 
@@ -267,7 +267,8 @@ impl Bucket {
 
         // Create a string from that slice
         // Safety: The source string was valid utf8, so the created buffer will be as well
-        core::str::from_utf8_unchecked(target)
+        //core::str::from_utf8_unchecked(target)
+        target
     }
 }
 
@@ -283,9 +284,10 @@ mod tests {
         let mut arena = Arena::default();
 
         unsafe {
-            let idx = arena.store_str("test");
+            let idx = arena.store_str(&[0x74,0x65,0x73,0x74]);
 
-            assert_eq!(idx, Ok("test"));
+            let slice: &[u16] = &[0x74,0x65,0x73,0x74];
+            assert_eq!(idx, Ok(slice));
         }
     }
 
@@ -294,13 +296,14 @@ mod tests {
         let mut arena = Arena::default();
 
         unsafe {
-            let zst = arena.store_str("");
-            let zst1 = arena.store_str("");
-            let zst2 = arena.store_str("");
+            let zst = arena.store_str(&[]);
+            let zst1 = arena.store_str(&[]);
+            let zst2 = arena.store_str(&[]);
 
-            assert_eq!(zst, Ok(""));
-            assert_eq!(zst1, Ok(""));
-            assert_eq!(zst2, Ok(""));
+            let slice: &[u16] = &[];
+            assert_eq!(zst, Ok(slice));
+            assert_eq!(zst1, Ok(slice));
+            assert_eq!(zst2, Ok(slice));
         }
     }
 
@@ -310,9 +313,9 @@ mod tests {
 
         let mut len = 4096;
         for _ in 0..10 {
-            let large_string = "a".repeat(len);
+            let large_string = &[0x61].repeat(len);
             let arena_string = unsafe { arena.store_str(&large_string) };
-            assert_eq!(arena_string, Ok(large_string.as_str()));
+            assert_eq!(arena_string, Ok(large_string.as_slice()));
 
             len *= 2;
         }
@@ -323,11 +326,11 @@ mod tests {
         let mut arena = Arena::new(NonZeroUsize::new(10).unwrap(), 10).unwrap();
 
         unsafe {
-            assert!(arena.store_str("0123456789").is_ok());
+            assert!(arena.store_str(&[0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39]).is_ok());
             // A ZST takes up a single byte
-            let err = arena.store_str("").unwrap_err();
+            let err = arena.store_str(&[]).unwrap_err();
             assert!(err.kind().is_memory_limit());
-            let err = arena.store_str("dfgsagdfgsdf").unwrap_err();
+            let err = arena.store_str(&[0x64,0x66,0x67,0x73,0x61,0x67,0x64,0x66,0x67,0x73,0x64,0x66]).unwrap_err();
             assert!(err.kind().is_memory_limit());
         }
     }
@@ -337,7 +340,7 @@ mod tests {
         let mut arena = Arena::new(NonZeroUsize::new(1).unwrap(), 10).unwrap();
 
         unsafe {
-            let err = arena.store_str("abcdefghijklmnopqrstuvwxyz").unwrap_err();
+            let err = arena.store_str(&[0x61,0x62,0x63,0x64,0x65,0x66,0x67,0x68,0x69,0x6a,0x6b,0x6c,0x6d,0x6e,0x6f,0x70,0x71,0x72,0x73,0x74,0x75,0x76,0x77,0x78,0x79,0x7a]).unwrap_err();
             assert!(err.kind().is_memory_limit());
         }
     }
@@ -347,7 +350,7 @@ mod tests {
         let mut arena = Arena::new(NonZeroUsize::new(1).unwrap(), 1000).unwrap();
 
         unsafe {
-            assert!(arena.store_str("abcdefghijklmnopqrstuvwxyz").is_ok());
+            assert!(arena.store_str(&[0x61,0x62,0x63,0x64,0x65,0x66,0x67,0x68,0x69,0x6a,0x6b,0x6c,0x6d,0x6e,0x6f,0x70,0x71,0x72,0x73,0x74,0x75,0x76,0x77,0x78,0x79,0x7a]).is_ok());
         }
     }
 }

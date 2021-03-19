@@ -197,7 +197,7 @@ impl Default for MemoryLimits {
 #[derive(Clone, Debug)]
 #[must_use = "iterators are lazy and do nothing unless consumed"]
 pub struct Iter<'a, K> {
-    iter: iter::Enumerate<slice::Iter<'a, &'a str>>,
+    iter: iter::Enumerate<slice::Iter<'a, &'a [u16]>>,
     __key: PhantomData<K>,
 }
 
@@ -227,7 +227,7 @@ impl<'a, K> Iter<'a, K> {
     }
 }
 
-fn iter_element<'a, K>((key, string): (usize, &&'a str)) -> (K, &'a str)
+fn iter_element<'a, K>((key, string): (usize, &&'a [u16])) -> (K, &'a [u16])
 where
     K: Key,
 {
@@ -241,7 +241,7 @@ impl<'a, K> Iterator for Iter<'a, K>
 where
     K: Key,
 {
-    type Item = (K, &'a str);
+    type Item = (K, &'a [u16]);
 
     #[cfg_attr(feature = "inline-more", inline)]
     fn next(&mut self) -> Option<Self::Item> {
@@ -259,12 +259,12 @@ where
     K: Key,
 {
     #[cfg_attr(feature = "inline-more", inline)]
-    fn next_back(&mut self) -> Option<(K, &'a str)> {
+    fn next_back(&mut self) -> Option<(K, &'a [u16])> {
         self.iter.next_back().map(iter_element)
     }
 
     #[cfg_attr(feature = "inline-more", inline)]
-    fn nth_back(&mut self, n: usize) -> Option<(K, &'a str)> {
+    fn nth_back(&mut self, n: usize) -> Option<(K, &'a [u16])> {
         self.iter.nth_back(n).map(iter_element)
     }
 }
@@ -277,9 +277,9 @@ impl<'a, K: Key> iter::FusedIterator for Iter<'a, K> {}
 
 // #[derive(Debug)]
 // pub struct LockedIter<'a, K: Key> {
-//     iter: iter::Enumerate<slice::Iter<'a, &'a str>>,
+//     iter: iter::Enumerate<slice::Iter<'a, &'a [u16]>>,
 //     #[cfg(not(feature = "parking_locks"))]
-//     __guard: std::sync::MutexGuard<'a, Vec<&'static str>>,
+//     __guard: std::sync::MutexGuard<'a, Vec<&'static [u16]>>,
 //     __key: PhantomData<K>,
 // }
 //
@@ -301,7 +301,7 @@ impl<'a, K: Key> iter::FusedIterator for Iter<'a, K> {}
 #[derive(Clone, Debug)]
 #[must_use = "iterators are lazy and do nothing unless consumed"]
 pub struct Strings<'a, K> {
-    iter: slice::Iter<'a, &'a str>,
+    iter: slice::Iter<'a, &'a [u16]>,
     __key: PhantomData<K>,
 }
 
@@ -332,7 +332,7 @@ impl<'a, K> Strings<'a, K> {
 }
 
 impl<'a, K> Iterator for Strings<'a, K> {
-    type Item = &'a str;
+    type Item = &'a [u16];
 
     #[cfg_attr(feature = "inline-more", inline)]
     fn next(&mut self) -> Option<Self::Item> {
@@ -350,12 +350,12 @@ where
     K: Key,
 {
     #[cfg_attr(feature = "inline-more", inline)]
-    fn next_back(&mut self) -> Option<&'a str> {
+    fn next_back(&mut self) -> Option<&'a [u16]> {
         self.iter.next_back().copied()
     }
 
     #[cfg_attr(feature = "inline-more", inline)]
-    fn nth_back(&mut self, n: usize) -> Option<&'a str> {
+    fn nth_back(&mut self, n: usize) -> Option<&'a [u16]> {
         self.iter.nth_back(n).copied()
     }
 }
@@ -487,18 +487,22 @@ mod tests {
     #[test]
     fn iter_rodeo() {
         let mut rodeo = Rodeo::default();
-        let a = rodeo.get_or_intern("A");
-        let b = rodeo.get_or_intern("B");
-        let c = rodeo.get_or_intern("C");
-        let d = rodeo.get_or_intern("D");
+        let a = rodeo.get_or_intern(&[0x41]);
+        let b = rodeo.get_or_intern(&[0x42]);
+        let c = rodeo.get_or_intern(&[0x43]);
+        let d = rodeo.get_or_intern(&[0x44]);
 
         let mut iter = Iter::from_rodeo(&rodeo);
 
         assert_eq!((4, Some(4)), iter.size_hint());
-        assert_eq!(Some((a, "A")), iter.next());
-        assert_eq!(Some((b, "B")), iter.next());
-        assert_eq!(Some((c, "C")), iter.next());
-        assert_eq!(Some((d, "D")), iter.next());
+        let aa: &[u16] = &[0x41];
+        let bb: &[u16] = &[0x42];
+        let cc: &[u16] = &[0x43];
+        let dd: &[u16] = &[0x44];
+        assert_eq!(Some((a, aa)), iter.next());
+        assert_eq!(Some((b, bb)), iter.next());
+        assert_eq!(Some((c, cc)), iter.next());
+        assert_eq!(Some((d, dd)), iter.next());
         assert_eq!(None, iter.next());
         assert_eq!((0, Some(0)), iter.size_hint());
     }
@@ -506,19 +510,23 @@ mod tests {
     #[test]
     fn iter_reader() {
         let mut rodeo = Rodeo::default();
-        let a = rodeo.get_or_intern("A");
-        let b = rodeo.get_or_intern("B");
-        let c = rodeo.get_or_intern("C");
-        let d = rodeo.get_or_intern("D");
+        let a = rodeo.get_or_intern(&[0x41]);
+        let b = rodeo.get_or_intern(&[0x42]);
+        let c = rodeo.get_or_intern(&[0x43]);
+        let d = rodeo.get_or_intern(&[0x44]);
 
         let reader = rodeo.into_reader();
         let mut iter = Iter::from_reader(&reader);
 
         assert_eq!((4, Some(4)), iter.size_hint());
-        assert_eq!(Some((a, "A")), iter.next());
-        assert_eq!(Some((b, "B")), iter.next());
-        assert_eq!(Some((c, "C")), iter.next());
-        assert_eq!(Some((d, "D")), iter.next());
+        let aa: &[u16] = &[0x41];
+        let bb: &[u16] = &[0x42];
+        let cc: &[u16] = &[0x43];
+        let dd: &[u16] = &[0x44];
+        assert_eq!(Some((a, aa)), iter.next());
+        assert_eq!(Some((b, bb)), iter.next());
+        assert_eq!(Some((c, cc)), iter.next());
+        assert_eq!(Some((d, dd)), iter.next());
         assert_eq!(None, iter.next());
         assert_eq!((0, Some(0)), iter.size_hint());
     }
@@ -526,19 +534,23 @@ mod tests {
     #[test]
     fn iter_resolver() {
         let mut rodeo = Rodeo::default();
-        let a = rodeo.get_or_intern("A");
-        let b = rodeo.get_or_intern("B");
-        let c = rodeo.get_or_intern("C");
-        let d = rodeo.get_or_intern("D");
+        let a = rodeo.get_or_intern(&[0x41]);
+        let b = rodeo.get_or_intern(&[0x42]);
+        let c = rodeo.get_or_intern(&[0x43]);
+        let d = rodeo.get_or_intern(&[0x44]);
 
         let resolver = rodeo.into_resolver();
         let mut iter = Iter::from_resolver(&resolver);
 
         assert_eq!((4, Some(4)), iter.size_hint());
-        assert_eq!(Some((a, "A")), iter.next());
-        assert_eq!(Some((b, "B")), iter.next());
-        assert_eq!(Some((c, "C")), iter.next());
-        assert_eq!(Some((d, "D")), iter.next());
+        let aa: &[u16] = &[0x41];
+        let bb: &[u16] = &[0x42];
+        let cc: &[u16] = &[0x43];
+        let dd: &[u16] = &[0x44];
+        assert_eq!(Some((a, aa)), iter.next());
+        assert_eq!(Some((b, bb)), iter.next());
+        assert_eq!(Some((c, cc)), iter.next());
+        assert_eq!(Some((d, dd)), iter.next());
         assert_eq!(None, iter.next());
         assert_eq!((0, Some(0)), iter.size_hint());
     }
@@ -546,18 +558,22 @@ mod tests {
     #[test]
     fn strings_rodeo() {
         let mut rodeo = Rodeo::default();
-        rodeo.get_or_intern("A");
-        rodeo.get_or_intern("B");
-        rodeo.get_or_intern("C");
-        rodeo.get_or_intern("D");
+        rodeo.get_or_intern(&[0x41]);
+        rodeo.get_or_intern(&[0x42]);
+        rodeo.get_or_intern(&[0x43]);
+        rodeo.get_or_intern(&[0x44]);
 
         let mut iter = Strings::from_rodeo(&rodeo);
 
         assert_eq!((4, Some(4)), iter.size_hint());
-        assert_eq!(Some("A"), iter.next());
-        assert_eq!(Some("B"), iter.next());
-        assert_eq!(Some("C"), iter.next());
-        assert_eq!(Some("D"), iter.next());
+        let a: &[u16] = &[0x41];
+        let b: &[u16] = &[0x42];
+        let c: &[u16] = &[0x43];
+        let d: &[u16] = &[0x44];
+        assert_eq!(Some(a), iter.next());
+        assert_eq!(Some(b), iter.next());
+        assert_eq!(Some(c), iter.next());
+        assert_eq!(Some(d), iter.next());
         assert_eq!(None, iter.next());
         assert_eq!((0, Some(0)), iter.size_hint());
     }
@@ -565,19 +581,23 @@ mod tests {
     #[test]
     fn strings_reader() {
         let mut rodeo = Rodeo::default();
-        rodeo.get_or_intern("A");
-        rodeo.get_or_intern("B");
-        rodeo.get_or_intern("C");
-        rodeo.get_or_intern("D");
+        rodeo.get_or_intern(&[0x41]);
+        rodeo.get_or_intern(&[0x42]);
+        rodeo.get_or_intern(&[0x43]);
+        rodeo.get_or_intern(&[0x44]);
 
         let reader = rodeo.into_reader();
         let mut iter = Strings::from_reader(&reader);
 
         assert_eq!((4, Some(4)), iter.size_hint());
-        assert_eq!(Some("A"), iter.next());
-        assert_eq!(Some("B"), iter.next());
-        assert_eq!(Some("C"), iter.next());
-        assert_eq!(Some("D"), iter.next());
+        let a: &[u16] = &[0x41];
+        let b: &[u16] = &[0x42];
+        let c: &[u16] = &[0x43];
+        let d: &[u16] = &[0x44];
+        assert_eq!(Some(a), iter.next());
+        assert_eq!(Some(b), iter.next());
+        assert_eq!(Some(c), iter.next());
+        assert_eq!(Some(d), iter.next());
         assert_eq!(None, iter.next());
         assert_eq!((0, Some(0)), iter.size_hint());
     }
@@ -585,19 +605,23 @@ mod tests {
     #[test]
     fn strings_resolver() {
         let mut rodeo = Rodeo::default();
-        rodeo.get_or_intern("A");
-        rodeo.get_or_intern("B");
-        rodeo.get_or_intern("C");
-        rodeo.get_or_intern("D");
+        rodeo.get_or_intern(&[0x41]);
+        rodeo.get_or_intern(&[0x42]);
+        rodeo.get_or_intern(&[0x43]);
+        rodeo.get_or_intern(&[0x44]);
 
         let resolver = rodeo.into_resolver();
         let mut iter = Strings::from_resolver(&resolver);
 
         assert_eq!((4, Some(4)), iter.size_hint());
-        assert_eq!(Some("A"), iter.next());
-        assert_eq!(Some("B"), iter.next());
-        assert_eq!(Some("C"), iter.next());
-        assert_eq!(Some("D"), iter.next());
+        let a: &[u16] = &[0x41];
+        let b: &[u16] = &[0x42];
+        let c: &[u16] = &[0x43];
+        let d: &[u16] = &[0x44];
+        assert_eq!(Some(a), iter.next());
+        assert_eq!(Some(b), iter.next());
+        assert_eq!(Some(c), iter.next());
+        assert_eq!(Some(d), iter.next());
         assert_eq!(None, iter.next());
         assert_eq!((0, Some(0)), iter.size_hint());
     }

@@ -1,9 +1,8 @@
-[![CI][1]][0]
-[![Security Audit][2]][0]
-[![Coverage][3]][4]
-[![LoC][5]][0]
-[![Docs.rs][6]][7]
-[![Crates.io][8]][9]
+This is a fork of [lasso][0], modified to store u16 arrays rather than char arrays.
+(I'm working on a JavaScript engine in Rust, to learn Rust better, and JavaScript strings are arbitrary sequences of
+16-bit values. Yes, even those that are not valid utf-16.
+
+----)
 
 A multithreaded and single threaded string interner that allows strings to be cached with a minimal memory footprint,
 associating them with a unique [key] that can be used to retrieve them at any time. A [`Rodeo`] allows `O(1)`
@@ -44,7 +43,7 @@ To make use of [`ThreadedRodeo`], you must enable the `multi-threaded` feature.
 ## Example: Using Rodeo
 
 ```rust
-use lasso::Rodeo;
+use lasso_u16::Rodeo;
 
 let mut rodeo = Rodeo::default();
 let key = rodeo.get_or_intern("Hello, world!");
@@ -62,7 +61,7 @@ assert_eq!(key, key2);
 ## Example: Using ThreadedRodeo
 
 ```rust
-use lasso::ThreadedRodeo;
+use lasso_u16::ThreadedRodeo;
 use std::{thread, sync::Arc};
 
 let rodeo = Arc::new(ThreadedRodeo::default());
@@ -93,7 +92,7 @@ assert_eq!("Hello from the thread!", rodeo.resolve(&hello));
 ## Example: Creating a RodeoReader
 
 ```rust
-use lasso::Rodeo;
+use lasso_u16::Rodeo;
 
 // Rodeo and ThreadedRodeo are interchangeable here
 let mut rodeo = Rodeo::default();
@@ -113,7 +112,7 @@ assert_eq!(Some(key), reader.get("Hello, world!"));
 ## Example: Creating a RodeoResolver
 
 ```rust
-use lasso::Rodeo;
+use lasso_u16::Rodeo;
 
 // Rodeo and ThreadedRodeo are interchangeable here
 let mut rodeo = Rodeo::default();
@@ -135,7 +134,7 @@ Sometimes you want your keys to only inhabit (or *not* inhabit) a certain range 
 This allows you to pack more data into what would otherwise be unused space, which can be critical for memory-sensitive applications.
 
 ```rust
-use lasso::{Key, Rodeo};
+use lasso_u16::{Key, Rodeo};
 
 // First make our key type, this will be what we use as handles into our interner
 #[derive(Copy, Clone, PartialEq, Eq)]
@@ -190,7 +189,7 @@ assert_eq!(rodeo.resolve(&key), "It works!");
 ## Example: Creation using `FromIterator`
 
 ```rust
-use lasso::Rodeo;
+use lasso_u16::Rodeo;
 use core::iter::FromIterator;
 
 // Works for both `Rodeo` and `ThreadedRodeo`
@@ -208,7 +207,7 @@ assert!(rodeo.contains("blue string"));
 ```
 
 ```rust
-use lasso::Rodeo;
+use lasso_u16::Rodeo;
 use core::iter::FromIterator;
 
 // Works for both `Rodeo` and `ThreadedRodeo`
@@ -224,11 +223,11 @@ assert!(rodeo.contains("blue string"));
 
 ## Benchmarks
 
-Benchmarks were gathered with [Criterion.rs](https://github.com/bheisler/criterion.rs)  
-OS: Windows 10  
-CPU: Ryzen 9 3900X at 3800Mhz  
-RAM: 3200Mhz  
-Rustc: Stable 1.44.1  
+Benchmarks were gathered with [Criterion.rs](https://github.com/bheisler/criterion.rs)
+OS: Windows 10
+CPU: Ryzen 9 3900X at 3800Mhz
+RAM: 3200Mhz
+Rustc: Stable 1.44.1
 
 ### Rodeo
 

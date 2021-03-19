@@ -56,7 +56,7 @@
 //! ## Example: Using Rodeo
 //!
 //! ```rust
-//! use lasso::Rodeo;
+//! use lasso_u16::Rodeo;
 //!
 //! let mut rodeo = Rodeo::default();
 //! let key = rodeo.get_or_intern("Hello, world!");
@@ -109,7 +109,7 @@
 //! # }
 //! #
 //! # #[cfg(feature = "multi-threaded")]
-//! use lasso::ThreadedRodeo;
+//! use lasso_u16::ThreadedRodeo;
 //! use std::{thread, sync::Arc};
 //!
 //! let rodeo = Arc::new(ThreadedRodeo::default());
@@ -140,7 +140,7 @@
 //! ## Example: Creating a RodeoReader
 //!
 //! ```rust
-//! use lasso::Rodeo;
+//! use lasso_u16::Rodeo;
 //!
 //! // Rodeo and ThreadedRodeo are interchangeable here
 //! let mut rodeo = Rodeo::default();
@@ -160,7 +160,7 @@
 //! ## Example: Creating a RodeoResolver
 //!
 //! ```rust
-//! use lasso::Rodeo;
+//! use lasso_u16::Rodeo;
 //!
 //! // Rodeo and ThreadedRodeo are interchangeable here
 //! let mut rodeo = Rodeo::default();
@@ -183,7 +183,7 @@
 //! what would otherwise be unused space, which can be critical for memory-sensitive applications.
 //!
 //! ```rust
-//! use lasso::{Key, Rodeo};
+//! use lasso_u16::{Key, Rodeo};
 //!
 //! // First make our key type, this will be what we use as handles into our interner
 //! #[derive(Copy, Clone, PartialEq, Eq)]
@@ -242,7 +242,7 @@
 //! ## Example: Creation using `FromIterator`
 //!
 //! ```rust
-//! use lasso::Rodeo;
+//! use lasso_u16::Rodeo;
 //! use core::iter::FromIterator;
 //!
 //! // Works for both `Rodeo` and `ThreadedRodeo`
@@ -257,7 +257,7 @@
 //! ```
 //!
 //! ```rust
-//! use lasso::Rodeo;
+//! use lasso_u16::Rodeo;
 //! use core::iter::FromIterator;
 //!
 //! // Works for both `Rodeo` and `ThreadedRodeo`

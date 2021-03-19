@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use core::hash::BuildHasher;
-use lasso::{Capacity, Rodeo, RodeoReader, RodeoResolver, Spur};
+use lasso_u16::{Capacity, Rodeo, RodeoReader, RodeoResolver, Spur};
 use std::{
     num::NonZeroUsize,
     sync::{atomic::AtomicBool, Arc, Barrier},

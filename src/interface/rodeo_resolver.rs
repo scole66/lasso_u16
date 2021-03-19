@@ -7,17 +7,17 @@ where
     K: Key,
 {
     #[cfg_attr(feature = "inline-more", inline)]
-    fn resolve<'a>(&'a self, key: &K) -> &'a str {
+    fn resolve<'a>(&'a self, key: &K) -> &'a [u16] {
         self.resolve(key)
     }
 
     #[cfg_attr(feature = "inline-more", inline)]
-    fn try_resolve<'a>(&'a self, key: &K) -> Option<&'a str> {
+    fn try_resolve<'a>(&'a self, key: &K) -> Option<&'a [u16]> {
         self.try_resolve(key)
     }
 
     #[cfg_attr(feature = "inline-more", inline)]
-    unsafe fn resolve_unchecked<'a>(&'a self, key: &K) -> &'a str {
+    unsafe fn resolve_unchecked<'a>(&'a self, key: &K) -> &'a [u16] {
         self.resolve_unchecked(key)
     }
 

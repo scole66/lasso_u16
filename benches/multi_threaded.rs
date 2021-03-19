@@ -2,7 +2,7 @@ mod setup;
 
 use core::hash::BuildHasher;
 use criterion::{black_box, criterion_group, criterion_main, BatchSize, Criterion, Throughput};
-use lasso::{Capacity, Spur, ThreadedRodeo};
+use lasso_u16::{Capacity, Spur, ThreadedRodeo};
 use setup::{bench_lines, INPUT, NUM_THREADS};
 use std::{
     sync::{atomic::AtomicBool, Arc, Barrier},

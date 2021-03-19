@@ -22,7 +22,7 @@ compile! {
 #[derive(Debug)]
 pub struct RodeoResolver<K = Spur> {
     /// Vector of strings mapped to key indexes that allows key to string resolution
-    pub(crate) strings: Vec<&'static str>,
+    pub(crate) strings: Vec<&'static [u16]>,
     /// The arena that contains all the strings
     ///
     /// This is not touched, but *must* be kept since every string in `self.strings`
@@ -40,7 +40,7 @@ impl<K> RodeoResolver<K> {
     /// The references inside of `strings` must be absolutely unique, meaning
     /// that no other references to those strings exist
     ///
-    pub(crate) unsafe fn new(strings: Vec<&'static str>, arena: Arena) -> Self {
+    pub(crate) unsafe fn new(strings: Vec<&'static [u16]>, arena: Arena) -> Self {
         Self {
             strings,
             __arena: arena,
@@ -58,7 +58,7 @@ impl<K> RodeoResolver<K> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let mut rodeo = Rodeo::default();
@@ -70,7 +70,7 @@ impl<K> RodeoResolver<K> {
     ///
     /// [`Key`]: crate::Key
     #[cfg_attr(feature = "inline-more", inline)]
-    pub fn resolve<'a>(&'a self, key: &K) -> &'a str
+    pub fn resolve<'a>(&'a self, key: &K) -> &'a [u16]
     where
         K: Key,
     {
@@ -91,7 +91,7 @@ impl<K> RodeoResolver<K> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let mut rodeo = Rodeo::default();
@@ -103,7 +103,7 @@ impl<K> RodeoResolver<K> {
     ///
     /// [`Key`]: crate::Key
     #[cfg_attr(feature = "inline-more", inline)]
-    pub fn try_resolve<'a>(&'a self, key: &K) -> Option<&'a str>
+    pub fn try_resolve<'a>(&'a self, key: &K) -> Option<&'a [u16]>
     where
         K: Key,
     {
@@ -129,7 +129,7 @@ impl<K> RodeoResolver<K> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let mut rodeo = Rodeo::default();
@@ -143,7 +143,7 @@ impl<K> RodeoResolver<K> {
     ///
     /// [`Key`]: crate::Key
     #[cfg_attr(feature = "inline-more", inline)]
-    pub unsafe fn resolve_unchecked<'a>(&'a self, key: &K) -> &'a str
+    pub unsafe fn resolve_unchecked<'a>(&'a self, key: &K) -> &'a [u16]
     where
         K: Key,
     {
@@ -155,8 +155,8 @@ impl<K> RodeoResolver<K> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
-    /// # use lasso::{Key, Spur};
+    /// use lasso_u16::Rodeo;
+    /// # use lasso_u16::{Key, Spur};
     ///
     /// let mut rodeo = Rodeo::default();
     /// let key = rodeo.get_or_intern("Strings of things with wings and dings");
@@ -180,7 +180,7 @@ impl<K> RodeoResolver<K> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let mut rodeo = Rodeo::default();
@@ -200,7 +200,7 @@ impl<K> RodeoResolver<K> {
     /// # Example
     ///
     /// ```rust
-    /// use lasso::Rodeo;
+    /// use lasso_u16::Rodeo;
     ///
     /// // ThreadedRodeo is interchangeable for Rodeo here
     /// let rodeo = Rodeo::default();
@@ -231,7 +231,7 @@ unsafe impl<K: Send> Send for RodeoResolver<K> {}
 unsafe impl<K: Sync> Sync for RodeoResolver<K> {}
 
 impl<'a, K: Key> IntoIterator for &'a RodeoResolver<K> {
-    type Item = (K, &'a str);
+    type Item = (K, &'a [u16]);
     type IntoIter = Iter<'a, K>;
 
     #[cfg_attr(feature = "inline-more", inline)]
@@ -241,7 +241,7 @@ impl<'a, K: Key> IntoIterator for &'a RodeoResolver<K> {
 }
 
 impl<K: Key> Index<K> for RodeoResolver<K> {
-    type Output = str;
+    type Output = [u16];
 
     #[cfg_attr(feature = "inline-more", inline)]
     fn index(&self, idx: K) -> &Self::Output {
@@ -343,10 +343,10 @@ mod tests {
         #[test]
         fn resolve() {
             let mut rodeo = Rodeo::default();
-            let key = rodeo.get_or_intern("A");
+            let key = rodeo.get_or_intern(&[0x41]);
 
             let resolver = rodeo.into_resolver();
-            assert_eq!("A", resolver.resolve(&key));
+            assert_eq!(&[0x41], resolver.resolve(&key));
         }
 
         #[test]
@@ -360,10 +360,11 @@ mod tests {
         #[test]
         fn try_resolve() {
             let mut rodeo = Rodeo::default();
-            let key = rodeo.get_or_intern("A");
+            let key = rodeo.get_or_intern(&[0x41]);
 
             let resolver = rodeo.into_resolver();
-            assert_eq!(Some("A"), resolver.try_resolve(&key));
+            let slice: &[u16] = &[0x41];
+            assert_eq!(Some(slice), resolver.try_resolve(&key));
             assert_eq!(
                 None,
                 resolver.try_resolve(&Spur::try_from_usize(10).unwrap())
@@ -373,20 +374,20 @@ mod tests {
         #[test]
         fn resolve_unchecked() {
             let mut rodeo = Rodeo::default();
-            let a = rodeo.get_or_intern("A");
+            let a = rodeo.get_or_intern(&[0x41]);
 
             let resolver = rodeo.into_resolver();
             unsafe {
-                assert_eq!("A", resolver.resolve_unchecked(&a));
+                assert_eq!(&[0x41], resolver.resolve_unchecked(&a));
             }
         }
 
         #[test]
         fn len() {
             let mut rodeo = Rodeo::default();
-            rodeo.get_or_intern("A");
-            rodeo.get_or_intern("B");
-            rodeo.get_or_intern("C");
+            rodeo.get_or_intern(&[0x41]);
+            rodeo.get_or_intern(&[0x42]);
+            rodeo.get_or_intern(&[0x43]);
 
             let resolver = rodeo.into_resolver();
             assert_eq!(resolver.len(), 3);
@@ -409,32 +410,38 @@ mod tests {
         #[test]
         fn iter() {
             let mut rodeo = Rodeo::default();
-            let a = rodeo.get_or_intern("a");
-            let b = rodeo.get_or_intern("b");
-            let c = rodeo.get_or_intern("c");
+            let a = rodeo.get_or_intern(&[0x61]);
+            let b = rodeo.get_or_intern(&[0x62]);
+            let c = rodeo.get_or_intern(&[0x63]);
 
             let resolver = rodeo.into_resolver();
             let mut iter = resolver.iter();
 
-            assert_eq!(Some((a, "a")), iter.next());
-            assert_eq!(Some((b, "b")), iter.next());
-            assert_eq!(Some((c, "c")), iter.next());
+            let slice: &[u16] = &[0x61];
+            assert_eq!(Some((a, slice)), iter.next());
+            let slice: &[u16] = &[0x62];
+            assert_eq!(Some((b, slice)), iter.next());
+            let slice: &[u16] = &[0x63];
+            assert_eq!(Some((c, slice)), iter.next());
             assert_eq!(None, iter.next());
         }
 
         #[test]
         fn strings() {
             let mut rodeo = Rodeo::default();
-            rodeo.get_or_intern("a");
-            rodeo.get_or_intern("b");
-            rodeo.get_or_intern("c");
+            rodeo.get_or_intern(&[0x61]);
+            rodeo.get_or_intern(&[0x62]);
+            rodeo.get_or_intern(&[0x63]);
 
             let resolver = rodeo.into_resolver();
             let mut iter = resolver.strings();
 
-            assert_eq!(Some("a"), iter.next());
-            assert_eq!(Some("b"), iter.next());
-            assert_eq!(Some("c"), iter.next());
+            let left: Option<&[u16]> = Some(&[0x61]);
+            assert_eq!(left, iter.next());
+            let left: Option<&[u16]> = Some(&[0x62]);
+            assert_eq!(left, iter.next());
+            let left: Option<&[u16]> = Some(&[0x63]);
+            assert_eq!(left, iter.next());
             assert_eq!(None, iter.next());
         }
 
@@ -448,7 +455,7 @@ mod tests {
         #[test]
         fn contains_key() {
             let mut rodeo = Rodeo::default();
-            let key = rodeo.get_or_intern("");
+            let key = rodeo.get_or_intern(&[]);
             let resolver = rodeo.into_resolver();
 
             assert!(resolver.contains_key(&key));
@@ -457,15 +464,21 @@ mod tests {
 
         #[test]
         fn into_iterator() {
-            let rodeo = ["a", "b", "c", "d", "e"]
+            let rodeo = [&[0x61], &[0x62], &[0x63], &[0x64], &[0x65]]
                 .iter()
                 .collect::<Rodeo>()
                 .into_resolver();
 
             for ((key, string), (expected_key, expected_string)) in rodeo.into_iter().zip(
-                [(0usize, "a"), (1, "b"), (2, "c"), (3, "d"), (4, "e")]
-                    .iter()
-                    .copied(),
+                [
+                    (0usize, &[0x61]),
+                    (1, &[0x62]),
+                    (2, &[0x63]),
+                    (3, &[0x64]),
+                    (4, &[0x65]),
+                ]
+                .iter()
+                .copied(),
             ) {
                 assert_eq!(key, Spur::try_from_usize(expected_key).unwrap());
                 assert_eq!(string, expected_string);
@@ -475,10 +488,10 @@ mod tests {
         #[test]
         fn index() {
             let mut rodeo = Rodeo::default();
-            let key = rodeo.get_or_intern("A");
+            let key = rodeo.get_or_intern(&[0x41]);
 
             let resolver = rodeo.into_resolver();
-            assert_eq!("A", &resolver[key]);
+            assert_eq!(&[0x41], &resolver[key]);
         }
 
         #[test]
@@ -500,10 +513,10 @@ mod tests {
         #[cfg(feature = "serialize")]
         fn filled_serialize() {
             let mut rodeo = Rodeo::default();
-            let a = rodeo.get_or_intern("a");
-            let b = rodeo.get_or_intern("b");
-            let c = rodeo.get_or_intern("c");
-            let d = rodeo.get_or_intern("d");
+            let a = rodeo.get_or_intern(&[0x61]);
+            let b = rodeo.get_or_intern(&[0x62]);
+            let c = rodeo.get_or_intern(&[0x63]);
+            let d = rodeo.get_or_intern(&[0x64]);
             let rodeo = rodeo.into_resolver();
 
             let ser = serde_json::to_string(&rodeo).unwrap();
@@ -514,7 +527,7 @@ mod tests {
             let deser2: RodeoResolver = serde_json::from_str(&ser2).unwrap();
 
             for (((correct_key, correct_str), (key1, str1)), (key2, str2)) in
-                [(a, "a"), (b, "b"), (c, "c"), (d, "d")]
+                [(a, &[0x61]), (b, &[0x62]), (c, &[0x63]), (d, &[0x64])]
                     .iter()
                     .copied()
                     .zip(&deser)
@@ -535,13 +548,13 @@ mod tests {
             assert_eq!(a.into_resolver(), b.into_resolver());
 
             let mut a = Rodeo::default();
-            a.get_or_intern("a");
-            a.get_or_intern("b");
-            a.get_or_intern("c");
+            a.get_or_intern(&[0x61]);
+            a.get_or_intern(&[0x62]);
+            a.get_or_intern(&[0x63]);
             let mut b = Rodeo::default();
-            b.get_or_intern("a");
-            b.get_or_intern("b");
-            b.get_or_intern("c");
+            b.get_or_intern(&[0x61]);
+            b.get_or_intern(&[0x62]);
+            b.get_or_intern(&[0x63]);
             assert_eq!(a.into_resolver(), b.into_resolver());
         }
 
@@ -552,13 +565,13 @@ mod tests {
             assert_eq!(a.into_reader(), b.into_resolver());
 
             let mut a = Rodeo::default();
-            a.get_or_intern("a");
-            a.get_or_intern("b");
-            a.get_or_intern("c");
+            a.get_or_intern(&[0x61]);
+            a.get_or_intern(&[0x62]);
+            a.get_or_intern(&[0x63]);
             let mut b = Rodeo::default();
-            b.get_or_intern("a");
-            b.get_or_intern("b");
-            b.get_or_intern("c");
+            b.get_or_intern(&[0x61]);
+            b.get_or_intern(&[0x62]);
+            b.get_or_intern(&[0x63]);
             assert_eq!(a.into_reader(), b.into_resolver());
         }
     }
@@ -571,19 +584,19 @@ mod tests {
         #[test]
         fn resolve() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("A");
+            let key = rodeo.intern(&[0x41]);
 
             let resolver = rodeo.into_resolver();
-            assert_eq!("A", resolver.resolve(&key));
+            assert_eq!(&[0x41], resolver.resolve(&key));
         }
 
         #[test]
         fn try_resolve() {
             let mut rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("A");
+            let key = rodeo.intern(&[0x41]);
 
             let resolver = rodeo.into_resolver();
-            assert_eq!(Some("A"), resolver.try_resolve(&key));
+            assert_eq!(Some(&[0x41]), resolver.try_resolve(&key));
             assert_eq!(
                 None,
                 resolver.try_resolve(&Spur::try_from_usize(10).unwrap())
@@ -594,20 +607,20 @@ mod tests {
         #[cfg(not(miri))]
         fn try_resolve_threaded() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("A");
+            let key = rodeo.intern(&[0x41]);
 
             let resolver = Arc::new(rodeo.into_resolver());
 
             let moved = Arc::clone(&resolver);
             thread::spawn(move || {
-                assert_eq!(Some("A"), resolver.try_resolve(&key));
+                assert_eq!(Some(&[0x41]), resolver.try_resolve(&key));
                 assert_eq!(
                     None,
                     resolver.try_resolve(&Spur::try_from_usize(10).unwrap())
                 );
             });
 
-            assert_eq!(Some("A"), resolver.try_resolve(&key));
+            assert_eq!(Some(&[0x41]), resolver.try_resolve(&key));
             assert_eq!(
                 None,
                 resolver.try_resolve(&Spur::try_from_usize(10).unwrap())
@@ -617,11 +630,11 @@ mod tests {
         #[test]
         fn resolve_unchecked() {
             let mut rodeo = ThreadedRodeo::default();
-            let a = rodeo.get_or_intern("A");
+            let a = rodeo.get_or_intern(&[0x41]);
 
             let resolver = rodeo.into_resolver();
             unsafe {
-                assert_eq!("A", resolver.resolve_unchecked(&a));
+                assert_eq!(&[0x41], resolver.resolve_unchecked(&a));
             }
         }
 
@@ -629,17 +642,17 @@ mod tests {
         #[cfg(not(miri))]
         fn resolve_unchecked_threaded() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("A");
+            let key = rodeo.intern(&[0x41]);
 
             let resolver = Arc::new(rodeo.into_resolver());
 
             let moved = Arc::clone(&resolver);
             thread::spawn(move || unsafe {
-                assert_eq!("A", moved.resolve_unchecked(&a));
+                assert_eq!(&[0x41], moved.resolve_unchecked(&a));
             });
 
             unsafe {
-                assert_eq!("A", resolver.resolve_unchecked(&a));
+                assert_eq!(&[0x41], resolver.resolve_unchecked(&a));
             }
         }
 
@@ -647,24 +660,24 @@ mod tests {
         #[cfg(not(miri))]
         fn resolve_threaded() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("A");
+            let key = rodeo.intern(&[0x41]);
 
             let resolver = Arc::new(rodeo.into_resolver());
 
             let moved = Arc::clone(&resolver);
             thread::spawn(move || {
-                assert_eq!("A", moved.resolve(&key));
+                assert_eq!(&[0x41], moved.resolve(&key));
             });
 
-            assert_eq!("A", resolver.resolve(&key));
+            assert_eq!(&[0x41], resolver.resolve(&key));
         }
 
         #[test]
         fn len() {
             let rodeo = ThreadedRodeo::default();
-            rodeo.intern("A");
-            rodeo.intern("B");
-            rodeo.intern("C");
+            rodeo.intern(&[0x41]);
+            rodeo.intern(&[0x42]);
+            rodeo.intern(&[0x43]);
 
             let resolver = rodeo.into_resolver();
             assert_eq!(resolver.len(), 3);
@@ -681,49 +694,49 @@ mod tests {
         #[test]
         fn iter() {
             let rodeo = ThreadedRodeo::default();
-            let a = rodeo.get_or_intern("a");
-            let b = rodeo.get_or_intern("b");
-            let c = rodeo.get_or_intern("c");
+            let a = rodeo.get_or_intern(&[0x61]);
+            let b = rodeo.get_or_intern(&[0x62]);
+            let c = rodeo.get_or_intern(&[0x63]);
 
             let resolver = rodeo.into_resolver();
             let mut iter = resolver.iter();
 
-            assert_eq!(Some((a, "a")), iter.next());
-            assert_eq!(Some((b, "b")), iter.next());
-            assert_eq!(Some((c, "c")), iter.next());
+            assert_eq!(Some((a, &[0x61])), iter.next());
+            assert_eq!(Some((b, &[0x62])), iter.next());
+            assert_eq!(Some((c, &[0x63])), iter.next());
             assert_eq!(None, iter.next());
         }
 
         #[test]
         fn strings() {
             let rodeo = ThreadedRodeo::default();
-            rodeo.get_or_intern("a");
-            rodeo.get_or_intern("b");
-            rodeo.get_or_intern("c");
+            rodeo.get_or_intern(&[0x61]);
+            rodeo.get_or_intern(&[0x62]);
+            rodeo.get_or_intern(&[0x63]);
 
             let resolver = rodeo.into_resolver();
             let mut iter = resolver.strings();
 
-            assert_eq!(Some("a"), iter.next());
-            assert_eq!(Some("b"), iter.next());
-            assert_eq!(Some("c"), iter.next());
+            assert_eq!(Some(&[0x61]), iter.next());
+            assert_eq!(Some(&[0x62]), iter.next());
+            assert_eq!(Some(&[0x63]), iter.next());
             assert_eq!(None, iter.next());
         }
 
         #[test]
         fn clone() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("Test");
+            let key = rodeo.intern(&[0x54, 0x65, 0x73, 0x74]);
 
             let resolver_rodeo = rodeo.into_resolver();
-            assert_eq!("Test", resolver_rodeo.resolve(&key));
+            assert_eq!(&[0x54, 0x65, 0x73, 0x74], resolver_rodeo.resolve(&key));
 
             let cloned = resolver_rodeo.clone();
-            assert_eq!("Test", cloned.resolve(&key));
+            assert_eq!(&[0x54, 0x65, 0x73, 0x74], cloned.resolve(&key));
 
             drop(resolver_rodeo);
 
-            assert_eq!("Test", cloned.resolve(&key));
+            assert_eq!(&[0x54, 0x65, 0x73, 0x74], cloned.resolve(&key));
         }
 
         #[test]
@@ -754,7 +767,7 @@ mod tests {
         #[test]
         fn contains_key() {
             let mut rodeo = ThreadedRodeo::default();
-            let key = rodeo.get_or_intern("");
+            let key = rodeo.get_or_intern(&[]);
             let resolver = rodeo.into_resolver();
 
             assert!(resolver.contains_key(&key));
@@ -763,15 +776,21 @@ mod tests {
 
         #[test]
         fn into_iterator() {
-            let rodeo = ["a", "b", "c", "d", "e"]
+            let rodeo = [&[0x61], &[0x62], &[0x63], &[0x64], &[0x65]]
                 .iter()
                 .collect::<ThreadedRodeo>()
                 .into_resolver();
 
             for ((key, string), (expected_key, expected_string)) in rodeo.into_iter().zip(
-                [(0usize, "a"), (1, "b"), (2, "c"), (3, "d"), (4, "e")]
-                    .iter()
-                    .copied(),
+                [
+                    (0usize, &[0x61]),
+                    (1, &[0x62]),
+                    (2, &[0x63]),
+                    (3, &[0x64]),
+                    (4, &[0x65]),
+                ]
+                .iter()
+                .copied(),
             ) {
                 assert_eq!(key, Spur::try_from_usize(expected_key).unwrap());
                 assert_eq!(string, expected_string);
@@ -781,10 +800,10 @@ mod tests {
         #[test]
         fn index() {
             let rodeo = ThreadedRodeo::default();
-            let key = rodeo.intern("A");
+            let key = rodeo.intern(&[0x41]);
 
             let resolver = rodeo.into_resolver();
-            assert_eq!("A", &resolver[key]);
+            assert_eq!(&[0x41], &resolver[key]);
         }
 
         #[test]
@@ -806,10 +825,10 @@ mod tests {
         #[cfg(feature = "serialize")]
         fn filled_serialize() {
             let rodeo = ThreadedRodeo::default();
-            let a = rodeo.get_or_intern("a");
-            let b = rodeo.get_or_intern("b");
-            let c = rodeo.get_or_intern("c");
-            let d = rodeo.get_or_intern("d");
+            let a = rodeo.get_or_intern(&[0x61]);
+            let b = rodeo.get_or_intern(&[0x62]);
+            let c = rodeo.get_or_intern(&[0x63]);
+            let d = rodeo.get_or_intern(&[0x64]);
             let rodeo = rodeo.into_resolver();
 
             let ser = serde_json::to_string(&rodeo).unwrap();
@@ -820,7 +839,7 @@ mod tests {
             let deser2: RodeoResolver = serde_json::from_str(&ser2).unwrap();
 
             for (((correct_key, correct_str), (key1, str1)), (key2, str2)) in
-                [(a, "a"), (b, "b"), (c, "c"), (d, "d")]
+                [(a, &[0x61]), (b, &[0x62]), (c, &[0x63]), (d, &[0x64])]
                     .iter()
                     .copied()
                     .zip(&deser)

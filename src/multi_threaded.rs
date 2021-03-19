@@ -64,7 +64,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::{ThreadedRodeo, Spur};
+    /// use lasso_u16::{ThreadedRodeo, Spur};
     /// use std::{thread, sync::Arc};
     ///
     /// let lasso: Arc<ThreadedRodeo<Spur>> = Arc::new(ThreadedRodeo::new());
@@ -98,7 +98,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::{ThreadedRodeo, Capacity, Spur};
+    /// use lasso_u16::{ThreadedRodeo, Capacity, Spur};
     ///
     /// let rodeo: ThreadedRodeo<Spur> = ThreadedRodeo::with_capacity(Capacity::for_strings(10));
     /// ```
@@ -125,7 +125,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::{ThreadedRodeo, MemoryLimits, Spur};
+    /// use lasso_u16::{ThreadedRodeo, MemoryLimits, Spur};
     ///
     /// let rodeo: ThreadedRodeo<Spur> = ThreadedRodeo::with_memory_limits(MemoryLimits::for_memory_usage(4096));
     /// ```
@@ -152,7 +152,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::{ThreadedRodeo, MemoryLimits, Spur};
+    /// use lasso_u16::{ThreadedRodeo, MemoryLimits, Spur};
     ///
     /// let rodeo: ThreadedRodeo<Spur> = ThreadedRodeo::with_memory_limits(MemoryLimits::for_memory_usage(4096));
     /// ```
@@ -178,7 +178,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::{Spur, ThreadedRodeo};
+    /// use lasso_u16::{Spur, ThreadedRodeo};
     /// use std::collections::hash_map::RandomState;
     ///
     /// let rodeo: ThreadedRodeo<Spur, RandomState> = ThreadedRodeo::with_hasher(RandomState::new());
@@ -200,7 +200,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::{Spur, Capacity, ThreadedRodeo};
+    /// use lasso_u16::{Spur, Capacity, ThreadedRodeo};
     /// use std::collections::hash_map::RandomState;
     ///
     /// let rodeo: ThreadedRodeo<Spur, RandomState> = ThreadedRodeo::with_capacity_and_hasher(Capacity::for_strings(10), RandomState::new());
@@ -223,7 +223,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::{Spur, Capacity, MemoryLimits, ThreadedRodeo};
+    /// use lasso_u16::{Spur, Capacity, MemoryLimits, ThreadedRodeo};
     /// use std::collections::hash_map::RandomState;
     ///
     /// let rodeo: ThreadedRodeo<Spur, RandomState> = ThreadedRodeo::with_capacity_memory_limits_and_hasher(
@@ -266,7 +266,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
+    /// use lasso_u16::ThreadedRodeo;
     ///
     /// let rodeo = ThreadedRodeo::default();
     ///
@@ -293,7 +293,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
+    /// use lasso_u16::ThreadedRodeo;
     ///
     /// let rodeo = ThreadedRodeo::default();
     ///
@@ -349,7 +349,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
+    /// use lasso_u16::ThreadedRodeo;
     ///
     /// let mut rodeo = ThreadedRodeo::default();
     ///
@@ -375,7 +375,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
+    /// use lasso_u16::ThreadedRodeo;
     ///
     /// let mut rodeo = ThreadedRodeo::default();
     ///
@@ -414,7 +414,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
+    /// use lasso_u16::ThreadedRodeo;
     ///
     /// let rodeo = ThreadedRodeo::default();
     ///
@@ -437,7 +437,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
+    /// use lasso_u16::ThreadedRodeo;
     ///
     /// let rodeo = ThreadedRodeo::default();
     ///
@@ -460,8 +460,8 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
-    /// # use lasso::{Key, Spur};
+    /// use lasso_u16::ThreadedRodeo;
+    /// # use lasso_u16::{Key, Spur};
     ///
     /// let mut rodeo = ThreadedRodeo::default();
     /// # let key_that_doesnt_exist = Spur::try_from_usize(1000).unwrap();
@@ -486,7 +486,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
+    /// use lasso_u16::ThreadedRodeo;
     ///
     /// let rodeo = ThreadedRodeo::default();
     ///
@@ -505,7 +505,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
+    /// use lasso_u16::ThreadedRodeo;
     ///
     /// let rodeo = ThreadedRodeo::default();
     ///
@@ -523,7 +523,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
+    /// use lasso_u16::ThreadedRodeo;
     ///
     /// let rodeo = ThreadedRodeo::default();
     /// rodeo.get_or_intern("Documentation often has little hidden bits in it");
@@ -541,7 +541,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
+    /// use lasso_u16::ThreadedRodeo;
     ///
     /// let rodeo = ThreadedRodeo::default();
     /// assert!(rodeo.is_empty());
@@ -560,7 +560,7 @@ where
     /// # Example
     ///
     /// ```no_run
-    /// use lasso::{Spur, Capacity, ThreadedRodeo};
+    /// use lasso_u16::{Spur, Capacity, ThreadedRodeo};
     ///
     /// let rodeo: ThreadedRodeo<Spur> = ThreadedRodeo::with_capacity(Capacity::for_strings(10));
     /// assert_eq!(rodeo.capacity(), 10);
@@ -610,7 +610,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
+    /// use lasso_u16::ThreadedRodeo;
     ///
     /// let rodeo = ThreadedRodeo::default();
     /// let key = rodeo.get_or_intern("Appear weak when you are strong, and strong when you are weak.");
@@ -712,7 +712,7 @@ where
     /// # Example
     ///
     /// ```rust
-    /// use lasso::ThreadedRodeo;
+    /// use lasso_u16::ThreadedRodeo;
     ///
     /// let rodeo = ThreadedRodeo::default();
     /// let key = rodeo.get_or_intern("Appear weak when you are strong, and strong when you are weak.");
@@ -1114,8 +1114,8 @@ mod tests {
         let rodeo: ThreadedRodeo<Spur, RandomState> =
             ThreadedRodeo::with_hasher(RandomState::new());
 
-        let key = rodeo.get_or_intern("Test");
-        assert_eq!("Test", rodeo.resolve(&key));
+        let key = rodeo.get_or_intern(&[0x54, 0x65, 0x73, 0x74]);
+        assert_eq!(&[0x54, 0x65, 0x73, 0x74], rodeo.resolve(&key));
     }
 
     #[test]
@@ -1123,22 +1123,22 @@ mod tests {
         let rodeo: ThreadedRodeo<Spur, RandomState> =
             ThreadedRodeo::with_capacity_and_hasher(Capacity::for_strings(10), RandomState::new());
 
-        let key = rodeo.get_or_intern("Test");
-        assert_eq!("Test", rodeo.resolve(&key));
+        let key = rodeo.get_or_intern(&[0x54, 0x65, 0x73, 0x74]);
+        assert_eq!(&[0x54, 0x65, 0x73, 0x74], rodeo.resolve(&key));
     }
 
     #[test]
     fn get_or_intern() {
         let rodeo = ThreadedRodeo::default();
 
-        let a = rodeo.get_or_intern("A");
-        assert_eq!(a, rodeo.get_or_intern("A"));
+        let a = rodeo.get_or_intern(&[0x41]);
+        assert_eq!(a, rodeo.get_or_intern(&[0x41]));
 
-        let b = rodeo.get_or_intern("B");
-        assert_eq!(b, rodeo.get_or_intern("B"));
+        let b = rodeo.get_or_intern(&[0x42]);
+        assert_eq!(b, rodeo.get_or_intern(&[0x42]));
 
-        let c = rodeo.get_or_intern("C");
-        assert_eq!(c, rodeo.get_or_intern("C"));
+        let c = rodeo.get_or_intern(&[0x43]);
+        assert_eq!(c, rodeo.get_or_intern(&[0x43]));
     }
 
     #[test]
@@ -1148,24 +1148,24 @@ mod tests {
 
         let moved = Arc::clone(&rodeo);
         thread::spawn(move || {
-            let a = moved.get_or_intern("A");
-            assert_eq!(a, moved.get_or_intern("A"));
+            let a = moved.get_or_intern(&[0x41]);
+            assert_eq!(a, moved.get_or_intern(&[0x41]));
 
-            let b = moved.get_or_intern("B");
-            assert_eq!(b, moved.get_or_intern("B"));
+            let b = moved.get_or_intern(&[0x42]);
+            assert_eq!(b, moved.get_or_intern(&[0x42]));
 
-            let c = moved.get_or_intern("C");
-            assert_eq!(c, moved.get_or_intern("C"));
+            let c = moved.get_or_intern(&[0x43]);
+            assert_eq!(c, moved.get_or_intern(&[0x43]));
         });
 
-        let a = rodeo.get_or_intern("A");
-        assert_eq!(a, rodeo.get_or_intern("A"));
+        let a = rodeo.get_or_intern(&[0x41]);
+        assert_eq!(a, rodeo.get_or_intern(&[0x41]));
 
-        let b = rodeo.get_or_intern("B");
-        assert_eq!(b, rodeo.get_or_intern("B"));
+        let b = rodeo.get_or_intern(&[0x42]);
+        assert_eq!(b, rodeo.get_or_intern(&[0x42]));
 
-        let c = rodeo.get_or_intern("C");
-        assert_eq!(c, rodeo.get_or_intern("C"));
+        let c = rodeo.get_or_intern(&[0x43]);
+        assert_eq!(c, rodeo.get_or_intern(&[0x43]));
     }
 
     #[test]
@@ -1176,12 +1176,12 @@ mod tests {
             rodeo.get_or_intern(i.to_string());
         }
 
-        let space = rodeo.try_get_or_intern("A").unwrap();
-        assert_eq!("A", rodeo.resolve(&space));
-        let space = rodeo.try_get_or_intern("A").unwrap();
-        assert_eq!("A", rodeo.resolve(&space));
+        let space = rodeo.try_get_or_intern(&[0x41]).unwrap();
+        assert_eq!(&[0x41], rodeo.resolve(&space));
+        let space = rodeo.try_get_or_intern(&[0x41]).unwrap();
+        assert_eq!(&[0x41], rodeo.resolve(&space));
 
-        assert!(rodeo.try_get_or_intern("C").is_err());
+        assert!(rodeo.try_get_or_intern(&[0x43]).is_err());
     }
 
     #[test]
@@ -1195,50 +1195,50 @@ mod tests {
 
         let moved = Arc::clone(&rodeo);
         thread::spawn(move || {
-            let a = moved.try_get_or_intern("A");
-            assert_eq!(a, moved.try_get_or_intern("A"));
-            let a = moved.try_get_or_intern("A");
-            assert_eq!(a, moved.try_get_or_intern("A"));
+            let a = moved.try_get_or_intern(&[0x41]);
+            assert_eq!(a, moved.try_get_or_intern(&[0x41]));
+            let a = moved.try_get_or_intern(&[0x41]);
+            assert_eq!(a, moved.try_get_or_intern(&[0x41]));
 
-            let b = moved.try_get_or_intern("B");
-            assert_eq!(b, moved.try_get_or_intern("B"));
-            let b = moved.try_get_or_intern("B");
-            assert_eq!(b, moved.try_get_or_intern("B"));
+            let b = moved.try_get_or_intern(&[0x42]);
+            assert_eq!(b, moved.try_get_or_intern(&[0x42]));
+            let b = moved.try_get_or_intern(&[0x42]);
+            assert_eq!(b, moved.try_get_or_intern(&[0x42]));
 
-            let c = moved.try_get_or_intern("C");
-            assert_eq!(c, moved.try_get_or_intern("C"));
-            let c = moved.try_get_or_intern("C");
-            assert_eq!(c, moved.try_get_or_intern("C"));
+            let c = moved.try_get_or_intern(&[0x43]);
+            assert_eq!(c, moved.try_get_or_intern(&[0x43]));
+            let c = moved.try_get_or_intern(&[0x43]);
+            assert_eq!(c, moved.try_get_or_intern(&[0x43]));
         });
 
-        let a = rodeo.try_get_or_intern("A");
-        assert_eq!(a, rodeo.try_get_or_intern("A"));
-        let a = rodeo.try_get_or_intern("A");
-        assert_eq!(a, rodeo.try_get_or_intern("A"));
+        let a = rodeo.try_get_or_intern(&[0x41]);
+        assert_eq!(a, rodeo.try_get_or_intern(&[0x41]));
+        let a = rodeo.try_get_or_intern(&[0x41]);
+        assert_eq!(a, rodeo.try_get_or_intern(&[0x41]));
 
-        let b = rodeo.try_get_or_intern("B");
-        assert_eq!(b, rodeo.try_get_or_intern("B"));
-        let b = rodeo.try_get_or_intern("B");
-        assert_eq!(b, rodeo.try_get_or_intern("B"));
+        let b = rodeo.try_get_or_intern(&[0x42]);
+        assert_eq!(b, rodeo.try_get_or_intern(&[0x42]));
+        let b = rodeo.try_get_or_intern(&[0x42]);
+        assert_eq!(b, rodeo.try_get_or_intern(&[0x42]));
 
-        let c = rodeo.try_get_or_intern("C");
-        assert_eq!(c, rodeo.try_get_or_intern("C"));
-        let c = rodeo.try_get_or_intern("C");
-        assert_eq!(c, rodeo.try_get_or_intern("C"));
+        let c = rodeo.try_get_or_intern(&[0x43]);
+        assert_eq!(c, rodeo.try_get_or_intern(&[0x43]));
+        let c = rodeo.try_get_or_intern(&[0x43]);
+        assert_eq!(c, rodeo.try_get_or_intern(&[0x43]));
     }
 
     #[test]
     fn get_or_intern_static() {
         let rodeo = ThreadedRodeo::default();
 
-        let a = rodeo.get_or_intern_static("A");
-        assert_eq!(a, rodeo.get_or_intern_static("A"));
+        let a = rodeo.get_or_intern_static(&[0x41]);
+        assert_eq!(a, rodeo.get_or_intern_static(&[0x41]));
 
-        let b = rodeo.get_or_intern_static("B");
-        assert_eq!(b, rodeo.get_or_intern_static("B"));
+        let b = rodeo.get_or_intern_static(&[0x42]);
+        assert_eq!(b, rodeo.get_or_intern_static(&[0x42]));
 
-        let c = rodeo.get_or_intern_static("C");
-        assert_eq!(c, rodeo.get_or_intern_static("C"));
+        let c = rodeo.get_or_intern_static(&[0x43]);
+        assert_eq!(c, rodeo.get_or_intern_static(&[0x43]));
     }
 
     #[test]
@@ -1248,66 +1248,66 @@ mod tests {
 
         let moved = Arc::clone(&rodeo);
         thread::spawn(move || {
-            let a = moved.try_get_or_intern_static("A");
-            assert_eq!(a, moved.try_get_or_intern("A"));
-            let a = moved.try_get_or_intern_static("A");
-            assert_eq!(a, moved.try_get_or_intern("A"));
+            let a = moved.try_get_or_intern_static(&[0x41]);
+            assert_eq!(a, moved.try_get_or_intern(&[0x41]));
+            let a = moved.try_get_or_intern_static(&[0x41]);
+            assert_eq!(a, moved.try_get_or_intern(&[0x41]));
 
-            let b = moved.try_get_or_intern_static("B");
-            assert_eq!(b, moved.try_get_or_intern("B"));
-            let b = moved.try_get_or_intern_static("B");
-            assert_eq!(b, moved.try_get_or_intern("B"));
+            let b = moved.try_get_or_intern_static(&[0x42]);
+            assert_eq!(b, moved.try_get_or_intern(&[0x42]));
+            let b = moved.try_get_or_intern_static(&[0x42]);
+            assert_eq!(b, moved.try_get_or_intern(&[0x42]));
 
-            let c = moved.try_get_or_intern_static("C");
-            assert_eq!(c, moved.try_get_or_intern("C"));
-            let c = moved.try_get_or_intern_static("C");
-            assert_eq!(c, moved.try_get_or_intern("C"));
+            let c = moved.try_get_or_intern_static(&[0x43]);
+            assert_eq!(c, moved.try_get_or_intern(&[0x43]));
+            let c = moved.try_get_or_intern_static(&[0x43]);
+            assert_eq!(c, moved.try_get_or_intern(&[0x43]));
         });
 
-        let a = rodeo.try_get_or_intern_static("A");
-        assert_eq!(a, rodeo.try_get_or_intern("A"));
-        let a = rodeo.try_get_or_intern_static("A");
-        assert_eq!(a, rodeo.try_get_or_intern("A"));
+        let a = rodeo.try_get_or_intern_static(&[0x41]);
+        assert_eq!(a, rodeo.try_get_or_intern(&[0x41]));
+        let a = rodeo.try_get_or_intern_static(&[0x41]);
+        assert_eq!(a, rodeo.try_get_or_intern(&[0x41]));
 
-        let b = rodeo.try_get_or_intern_static("B");
-        assert_eq!(b, rodeo.try_get_or_intern("B"));
-        let b = rodeo.try_get_or_intern_static("B");
-        assert_eq!(b, rodeo.try_get_or_intern("B"));
+        let b = rodeo.try_get_or_intern_static(&[0x42]);
+        assert_eq!(b, rodeo.try_get_or_intern(&[0x42]));
+        let b = rodeo.try_get_or_intern_static(&[0x42]);
+        assert_eq!(b, rodeo.try_get_or_intern(&[0x42]));
 
-        let c = rodeo.try_get_or_intern_static("C");
-        assert_eq!(c, rodeo.try_get_or_intern("C"));
-        let c = rodeo.try_get_or_intern_static("C");
-        assert_eq!(c, rodeo.try_get_or_intern("C"));
+        let c = rodeo.try_get_or_intern_static(&[0x43]);
+        assert_eq!(c, rodeo.try_get_or_intern(&[0x43]));
+        let c = rodeo.try_get_or_intern_static(&[0x43]);
+        assert_eq!(c, rodeo.try_get_or_intern(&[0x43]));
     }
 
     #[test]
     fn get() {
         let rodeo = ThreadedRodeo::default();
-        let key = rodeo.get_or_intern("A");
+        let key = rodeo.get_or_intern(&[0x41]);
 
-        assert_eq!(Some(key), rodeo.get("A"));
+        assert_eq!(Some(key), rodeo.get(&[0x41]));
     }
 
     #[test]
     #[cfg(not(any(miri, feature = "no-std")))]
     fn get_threaded() {
         let rodeo = Arc::new(ThreadedRodeo::default());
-        let key = rodeo.get_or_intern("A");
+        let key = rodeo.get_or_intern(&[0x41]);
 
         let moved = Arc::clone(&rodeo);
         thread::spawn(move || {
-            assert_eq!(Some(key), moved.get("A"));
+            assert_eq!(Some(key), moved.get(&[0x41]));
         });
 
-        assert_eq!(Some(key), rodeo.get("A"));
+        assert_eq!(Some(key), rodeo.get(&[0x41]));
     }
 
     #[test]
     fn resolve() {
         let rodeo = ThreadedRodeo::default();
-        let key = rodeo.get_or_intern("A");
+        let key = rodeo.get_or_intern(&[0x41]);
 
-        assert_eq!("A", rodeo.resolve(&key));
+        assert_eq!(&[0x41], rodeo.resolve(&key));
     }
 
     #[test]
@@ -1322,38 +1322,38 @@ mod tests {
     #[cfg(not(any(miri, feature = "no-std")))]
     fn resolve_threaded() {
         let rodeo = Arc::new(ThreadedRodeo::default());
-        let key = rodeo.get_or_intern("A");
+        let key = rodeo.get_or_intern(&[0x41]);
 
         let moved = Arc::clone(&rodeo);
         thread::spawn(move || {
-            assert_eq!("A", moved.resolve(&key));
+            assert_eq!(&[0x41], moved.resolve(&key));
         });
 
-        assert_eq!("A", rodeo.resolve(&key));
+        assert_eq!(&[0x41], rodeo.resolve(&key));
     }
 
     #[test]
     #[cfg(not(any(miri, feature = "no-std", tarpaulin)))]
     fn resolve_panics_threaded() {
         let rodeo = Arc::new(ThreadedRodeo::default());
-        let key = rodeo.get_or_intern("A");
+        let key = rodeo.get_or_intern(&[0x41]);
 
         let moved = Arc::clone(&rodeo);
         let handle = thread::spawn(move || {
-            assert_eq!("A", moved.resolve(&key));
+            assert_eq!(&[0x41], moved.resolve(&key));
             moved.resolve(&Spur::try_from_usize(100).unwrap());
         });
 
-        assert_eq!("A", rodeo.resolve(&key));
+        assert_eq!(&[0x41], rodeo.resolve(&key));
         assert!(handle.join().is_err());
     }
 
     #[test]
     fn try_resolve() {
         let rodeo = ThreadedRodeo::default();
-        let key = rodeo.get_or_intern("A");
+        let key = rodeo.get_or_intern(&[0x41]);
 
-        assert_eq!(Some("A"), rodeo.try_resolve(&key));
+        assert_eq!(Some(&[0x41]), rodeo.try_resolve(&key));
         assert_eq!(None, rodeo.try_resolve(&Spur::try_from_usize(100).unwrap()));
     }
 
@@ -1361,24 +1361,24 @@ mod tests {
     #[cfg(not(any(miri, feature = "no-std")))]
     fn try_resolve_threaded() {
         let rodeo = Arc::new(ThreadedRodeo::default());
-        let key = rodeo.get_or_intern("A");
+        let key = rodeo.get_or_intern(&[0x41]);
 
         let moved = Arc::clone(&rodeo);
         thread::spawn(move || {
-            assert_eq!(Some("A"), moved.try_resolve(&key));
+            assert_eq!(Some(&[0x41]), moved.try_resolve(&key));
             assert_eq!(None, moved.try_resolve(&Spur::try_from_usize(100).unwrap()));
         });
 
-        assert_eq!(Some("A"), rodeo.try_resolve(&key));
+        assert_eq!(Some(&[0x41]), rodeo.try_resolve(&key));
         assert_eq!(None, rodeo.try_resolve(&Spur::try_from_usize(100).unwrap()));
     }
 
     #[test]
     fn len() {
         let rodeo = ThreadedRodeo::default();
-        rodeo.get_or_intern("A");
-        rodeo.get_or_intern("B");
-        rodeo.get_or_intern("C");
+        rodeo.get_or_intern(&[0x41]);
+        rodeo.get_or_intern(&[0x42]);
+        rodeo.get_or_intern(&[0x43]);
 
         assert_eq!(rodeo.len(), 3);
     }
@@ -1393,16 +1393,16 @@ mod tests {
     // #[test]
     // fn clone() {
     //     let rodeo = ThreadedRodeo::default();
-    //     let key = rodeo.get_or_intern("Test");
+    //     let key = rodeo.get_or_intern(&[0x54, 0x65, 0x73, 0x74]);
     //
-    //     assert_eq!("Test", rodeo.resolve(&key));
+    //     assert_eq!(&[0x54, 0x65, 0x73, 0x74], rodeo.resolve(&key));
     //
     //     let cloned = rodeo.clone();
-    //     assert_eq!("Test", cloned.resolve(&key));
+    //     assert_eq!(&[0x54, 0x65, 0x73, 0x74], cloned.resolve(&key));
     //
     //     drop(rodeo);
     //
-    //     assert_eq!("Test", cloned.resolve(&key));
+    //     assert_eq!(&[0x54, 0x65, 0x73, 0x74], cloned.resolve(&key));
     // }
 
     #[test]
@@ -1431,27 +1431,27 @@ mod tests {
     #[test]
     fn iter() {
         let rodeo = ThreadedRodeo::default();
-        rodeo.get_or_intern_static("A");
-        rodeo.get_or_intern_static("B");
-        rodeo.get_or_intern_static("C");
+        rodeo.get_or_intern_static(&[0x41]);
+        rodeo.get_or_intern_static(&[0x42]);
+        rodeo.get_or_intern_static(&[0x43]);
         let values: Vec<_> = rodeo.iter().map(|(k, v)| (k.into_usize(), v)).collect();
         assert_eq!(values.len(), 3);
-        assert!(values.contains(&(0, "A")));
-        assert!(values.contains(&(1, "B")));
-        assert!(values.contains(&(2, "C")));
+        assert!(values.contains(&(0, &[0x41])));
+        assert!(values.contains(&(1, &[0x42])));
+        assert!(values.contains(&(2, &[0x43])));
     }
 
     #[test]
     fn strings() {
         let rodeo = ThreadedRodeo::default();
-        rodeo.get_or_intern_static("A");
-        rodeo.get_or_intern_static("B");
-        rodeo.get_or_intern_static("C");
+        rodeo.get_or_intern_static(&[0x41]);
+        rodeo.get_or_intern_static(&[0x42]);
+        rodeo.get_or_intern_static(&[0x43]);
         let strings: Vec<_> = rodeo.strings().collect();
         assert_eq!(strings.len(), 3);
-        assert!(strings.contains(&"A"));
-        assert!(strings.contains(&"B"));
-        assert!(strings.contains(&"C"));
+        assert!(strings.contains(&&[0x41]));
+        assert!(strings.contains(&&[0x42]));
+        assert!(strings.contains(&&[0x43]));
     }
 
     #[test]
@@ -1473,19 +1473,19 @@ mod tests {
     #[test]
     fn into_resolver() {
         let rodeo = ThreadedRodeo::default();
-        let key = rodeo.get_or_intern("A");
+        let key = rodeo.get_or_intern(&[0x41]);
 
         let resolver = rodeo.into_resolver();
-        assert_eq!("A", resolver.resolve(&key));
+        assert_eq!(&[0x41], resolver.resolve(&key));
     }
 
     #[test]
     fn into_reader() {
         let rodeo = ThreadedRodeo::default();
-        let key = rodeo.get_or_intern("A");
+        let key = rodeo.get_or_intern(&[0x41]);
 
         let reader = rodeo.into_reader();
-        assert_eq!("A", reader.resolve(&key));
+        assert_eq!(&[0x41], reader.resolve(&key));
     }
 
     #[test]
@@ -1560,7 +1560,7 @@ mod tests {
                 RandomState::new(),
             );
 
-        rodeo.get_or_intern("Test");
+        rodeo.get_or_intern(&[0x54, 0x65, 0x73, 0x74]);
     }
 
     #[test]
@@ -1570,7 +1570,7 @@ mod tests {
             MemoryLimits::default(),
         );
 
-        rodeo.get_or_intern("Test");
+        rodeo.get_or_intern(&[0x54, 0x65, 0x73, 0x74]);
     }
 
     #[test]
@@ -1641,21 +1641,21 @@ mod tests {
 
     #[test]
     fn from_iter() {
-        let rodeo: ThreadedRodeo = ThreadedRodeo::from_iter(["a", "b", "c", "d", "e"].iter());
+        let rodeo: ThreadedRodeo = ThreadedRodeo::from_iter([&[0x61], &[0x62], &[0x63], &[0x64], &[0x65]].iter());
 
-        assert!(rodeo.contains("a"));
-        assert!(rodeo.contains("b"));
-        assert!(rodeo.contains("c"));
-        assert!(rodeo.contains("d"));
-        assert!(rodeo.contains("e"));
+        assert!(rodeo.contains(&[0x61]));
+        assert!(rodeo.contains(&[0x62]));
+        assert!(rodeo.contains(&[0x63]));
+        assert!(rodeo.contains(&[0x64]));
+        assert!(rodeo.contains(&[0x65]));
     }
 
     #[test]
     fn index() {
         let rodeo = ThreadedRodeo::default();
-        let key = rodeo.get_or_intern("A");
+        let key = rodeo.get_or_intern(&[0x41]);
 
-        assert_eq!("A", &rodeo[key]);
+        assert_eq!(&[0x41], &rodeo[key]);
     }
 
     #[test]
@@ -1663,12 +1663,12 @@ mod tests {
         let mut rodeo = ThreadedRodeo::default();
         assert!(rodeo.is_empty());
 
-        rodeo.extend(["a", "b", "c", "d", "e"].iter());
-        assert!(rodeo.contains("a"));
-        assert!(rodeo.contains("b"));
-        assert!(rodeo.contains("c"));
-        assert!(rodeo.contains("d"));
-        assert!(rodeo.contains("e"));
+        rodeo.extend([&[0x61], &[0x62], &[0x63], &[0x64], &[0x65]].iter());
+        assert!(rodeo.contains(&[0x61]));
+        assert!(rodeo.contains(&[0x62]));
+        assert!(rodeo.contains(&[0x63]));
+        assert!(rodeo.contains(&[0x64]));
+        assert!(rodeo.contains(&[0x65]));
     }
 
     #[test]
@@ -1690,10 +1690,10 @@ mod tests {
     #[cfg(feature = "serialize")]
     fn filled_serialize() {
         let rodeo = ThreadedRodeo::default();
-        let a = rodeo.get_or_intern("a");
-        let b = rodeo.get_or_intern("b");
-        let c = rodeo.get_or_intern("c");
-        let d = rodeo.get_or_intern("d");
+        let a = rodeo.get_or_intern(&[0x61]);
+        let b = rodeo.get_or_intern(&[0x62]);
+        let c = rodeo.get_or_intern(&[0x63]);
+        let d = rodeo.get_or_intern(&[0x64]);
 
         let ser = serde_json::to_string(&rodeo).unwrap();
         let ser2 = serde_json::to_string(&rodeo).unwrap();
@@ -1701,7 +1701,7 @@ mod tests {
         let deser: ThreadedRodeo = serde_json::from_str(&ser).unwrap();
         let deser2: ThreadedRodeo = serde_json::from_str(&ser2).unwrap();
 
-        for (correct_key, correct_str) in [(a, "a"), (b, "b"), (c, "c"), (d, "d")].iter().copied() {
+        for (correct_key, correct_str) in [(a, &[0x61]), (b, &[0x62]), (c, &[0x63]), (d, &[0x64])].iter().copied() {
             assert_eq!(correct_key, deser.get(correct_str).unwrap());
             assert_eq!(correct_key, deser2.get(correct_str).unwrap());
 
@@ -1717,13 +1717,13 @@ mod tests {
         assert_eq!(a, b);
 
         let a = ThreadedRodeo::default();
-        a.get_or_intern("a");
-        a.get_or_intern("b");
-        a.get_or_intern("c");
+        a.get_or_intern(&[0x61]);
+        a.get_or_intern(&[0x62]);
+        a.get_or_intern(&[0x63]);
         let b = ThreadedRodeo::default();
-        b.get_or_intern("a");
-        b.get_or_intern("b");
-        b.get_or_intern("c");
+        b.get_or_intern(&[0x61]);
+        b.get_or_intern(&[0x62]);
+        b.get_or_intern(&[0x63]);
         assert_eq!(a, b);
     }
 
@@ -1734,13 +1734,13 @@ mod tests {
         assert_eq!(a, b);
 
         let a = ThreadedRodeo::default();
-        a.get_or_intern("a");
-        a.get_or_intern("b");
-        a.get_or_intern("c");
+        a.get_or_intern(&[0x61]);
+        a.get_or_intern(&[0x62]);
+        a.get_or_intern(&[0x63]);
         let mut b = Rodeo::default();
-        b.get_or_intern("a");
-        b.get_or_intern("b");
-        b.get_or_intern("c");
+        b.get_or_intern(&[0x61]);
+        b.get_or_intern(&[0x62]);
+        b.get_or_intern(&[0x63]);
         assert_eq!(a, b);
     }
 
@@ -1751,13 +1751,13 @@ mod tests {
         assert_eq!(a, b);
 
         let a = ThreadedRodeo::default();
-        a.get_or_intern("a");
-        a.get_or_intern("b");
-        a.get_or_intern("c");
+        a.get_or_intern(&[0x61]);
+        a.get_or_intern(&[0x62]);
+        a.get_or_intern(&[0x63]);
         let mut b = Rodeo::default();
-        b.get_or_intern("a");
-        b.get_or_intern("b");
-        b.get_or_intern("c");
+        b.get_or_intern(&[0x61]);
+        b.get_or_intern(&[0x62]);
+        b.get_or_intern(&[0x63]);
         assert_eq!(a, b.into_resolver());
     }
 
@@ -1768,13 +1768,13 @@ mod tests {
         assert_eq!(a, b);
 
         let a = ThreadedRodeo::default();
-        a.get_or_intern("a");
-        a.get_or_intern("b");
-        a.get_or_intern("c");
+        a.get_or_intern(&[0x61]);
+        a.get_or_intern(&[0x62]);
+        a.get_or_intern(&[0x63]);
         let mut b = Rodeo::default();
-        b.get_or_intern("a");
-        b.get_or_intern("b");
-        b.get_or_intern("c");
+        b.get_or_intern(&[0x61]);
+        b.get_or_intern(&[0x62]);
+        b.get_or_intern(&[0x63]);
         assert_eq!(a, b.into_reader());
     }
 
@@ -1796,10 +1796,10 @@ mod tests {
 
             handles.push(thread::spawn(move || {
                 moved_barrier.wait();
-                assert_eq!(expected, moved_rodeo.get_or_intern("A"));
-                assert_eq!(expected, moved_rodeo.get_or_intern("A"));
-                assert_eq!(expected, moved_rodeo.get_or_intern("A"));
-                assert_eq!(expected, moved_rodeo.get_or_intern("A"));
+                assert_eq!(expected, moved_rodeo.get_or_intern(&[0x41]));
+                assert_eq!(expected, moved_rodeo.get_or_intern(&[0x41]));
+                assert_eq!(expected, moved_rodeo.get_or_intern(&[0x41]));
+                assert_eq!(expected, moved_rodeo.get_or_intern(&[0x41]));
             }));
         }
 
@@ -1826,10 +1826,10 @@ mod tests {
 
             handles.push(thread::spawn(move || {
                 moved_barrier.wait();
-                assert_eq!(expected, moved_rodeo.get_or_intern_static("A"));
-                assert_eq!(expected, moved_rodeo.get_or_intern_static("A"));
-                assert_eq!(expected, moved_rodeo.get_or_intern_static("A"));
-                assert_eq!(expected, moved_rodeo.get_or_intern_static("A"));
+                assert_eq!(expected, moved_rodeo.get_or_intern_static(&[0x41]));
+                assert_eq!(expected, moved_rodeo.get_or_intern_static(&[0x41]));
+                assert_eq!(expected, moved_rodeo.get_or_intern_static(&[0x41]));
+                assert_eq!(expected, moved_rodeo.get_or_intern_static(&[0x41]));
             }));
         }
 
